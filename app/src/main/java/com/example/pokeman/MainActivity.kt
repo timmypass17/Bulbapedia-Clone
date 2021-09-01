@@ -31,12 +31,12 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val pokemonService = retrofit.create(PokemonService::class.java)
-        pokemonService.getPokemons().enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
+        pokemonService.getPokemons().enqueue(object : Callback<PokemonSearchResult> {
+            override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
                 Log.i(TAG, "onResponse $response")
             }
 
-            override fun onFailure(call: Call<Any>, t: Throwable) {
+            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
                 Log.i(TAG, "onFailure $t")
 
             }
@@ -44,8 +44,4 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
-
-    // Testing commit 1
-
-    // Test commit 2
 }

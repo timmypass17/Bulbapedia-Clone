@@ -7,5 +7,5 @@ import retrofit2.http.GET
 interface PokemonService {
 
     @GET("pokemon")
-    fun getPokemons() : Call<Any>
+    fun getPokemons() : Call<PokemonSearchResult>
 }
