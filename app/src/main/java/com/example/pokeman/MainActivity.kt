@@ -46,4 +46,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Testing commit 1
+
+    // Test commit 2
 }
