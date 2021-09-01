@@ -3,6 +3,8 @@ package com.example.pokeman
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokeman.databinding.ActivityMainBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +27,11 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val pokemons = mutableListOf<Pokemon>()
+        val adapter = PokemonAdapter(this, pokemons)
+        binding.rvPokemons.adapter = adapter
+        binding.rvPokemons.layoutManager = LinearLayoutManager(this)
+
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -34,6 +41,13 @@ class MainActivity : AppCompatActivity() {
         pokemonService.getPokemons().enqueue(object : Callback<PokemonSearchResult> {
             override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
                 Log.i(TAG, "onResponse $response")
+                val body = response.body()
+                if (body == null) {
+                    Log.w(TAG, "Did not receive valid response body from Pokemon API")
+                    return
+                }
+                pokemons.addAll(body.pokemons)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
