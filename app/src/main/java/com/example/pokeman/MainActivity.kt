@@ -20,6 +20,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var retrofit: Retrofit
+    private lateinit var pokemonService: PokemonService
+    private lateinit var adapter: PokemonAdapter
+    private var pokemons = mutableListOf<Pokemon>()
+    private var pokemon_seen = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,17 +32,16 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val pokemons = mutableListOf<Pokemon>()
-        val adapter = PokemonAdapter(this, pokemons)
+        adapter = PokemonAdapter(this, pokemons)
         binding.rvPokemons.adapter = adapter
         binding.rvPokemons.layoutManager = LinearLayoutManager(this)
 
-        val retrofit = Retrofit.Builder()
+        retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val pokemonService = retrofit.create(PokemonService::class.java)
+        pokemonService = retrofit.create(PokemonService::class.java)
         pokemonService.getPokemons().enqueue(object : Callback<PokemonSearchResult> {
             override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
                 Log.i(TAG, "onResponse $response")
@@ -47,15 +51,52 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 pokemons.addAll(body.pokemons)
-                adapter.notifyDataSetChanged()
+                getMorePokemonInfo()
+                // adapter.notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
                 Log.i(TAG, "onFailure $t")
-
             }
-
         })
+    }
 
+    private fun getMorePokemonInfo() {
+        for (pokemon: Pokemon in pokemons) {
+            val pokemonId = getId(pokemon.url)
+            pokemonService.getPokemonById(pokemonId).enqueue(object : Callback<PokemonInfo> {
+                override fun onResponse(call: Call<PokemonInfo>, response: Response<PokemonInfo>) {
+                    val body = response.body()
+                    if (body == null) {
+                        Log.w(TAG, "Did not receive valid response body from Pokemon API")
+                        return
+                    }
+                    updatePokemonInfo(body)
+                    pokemon_seen += 1
+                    // If we seen ALL the pokemon, then notify data set changed
+                    // Reason: This is an asynchronous operation so we should notify data set has changed
+                    // after we seen our LAST pokemon.
+                    if (pokemon_seen == pokemons.size) {
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onFailure(call: Call<PokemonInfo>, t: Throwable) {
+                    Log.i(TAG, "onFailure $t")
+                }
+
+            })
+        }
+    }
+
+    private fun updatePokemonInfo(pokemonInfo: PokemonInfo) {
+        // Recall: Bulbasaur's id is 1
+        pokemons[pokemonInfo.position - 1].base_experience = pokemonInfo.base_experience
+    }
+
+    private fun getId(url: String): String {
+        val urlParts = url.split("/").toTypedArray()
+        Log.i(TAG, "Pokemon Id: ${urlParts[urlParts.size - 2]}")
+        return urlParts[urlParts.size - 2]
     }
 }

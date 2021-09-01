@@ -4,11 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokeman.databinding.ItemPokemonBinding
-import org.w3c.dom.Text
 
 class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
@@ -34,6 +31,7 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
 
         fun bind(pokemon: Pokemon) {
             binding.tvName.text = pokemon.name
+            binding.tvExp.text = "XP: ${pokemon.base_experience}"
         }
     }
 
