@@ -2,6 +2,7 @@ package com.example.pokeman
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokeman.databinding.ActivityMainBinding
@@ -41,75 +42,133 @@ class MainActivity : AppCompatActivity() {
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
-        queryPokemons()
+        // Query first 151 pokemons
+        for (i in 1..151) {
+            queryPokemon(i.toString())
+        }
     }
 
-    private fun queryPokemons() {
-        pokemonService.getPokemons().enqueue(object : Callback<PokemonSearchResult> {
-            override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
+    private fun queryPokemon(id: String) {
+        pokemonService.getPokemonById(id).enqueue(object : Callback<Pokemon> {
+            override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
                 Log.i(TAG, "onResponse $response")
-                val body = response.body()
-                if (body == null) {
+                val pokemon = response.body()
+                if (pokemon == null) {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
                     return
                 }
-                pokemons.addAll(body.pokemons)
-                for (pokemon: Pokemon in body.pokemons){
-                    getMorePokemonInfo(pokemon)
+                pokemons.add(pokemon)
+                pokemon_seen+=1
+                pokemons.sortBy { it.id }
+                adapter.notifyDataSetChanged()
+                if (pokemon_seen == 151) {
+                    updateSpinnerWithNumber()
+                    updateSpinnerWithName()
+                    updateSpinnerWithType()
                 }
             }
 
-            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
+            override fun onFailure(call: Call<Pokemon>, t: Throwable) {
                 Log.i(TAG, "onFailure $t")
             }
         })
     }
-    // If we seen ALL the pokemon, then notify data set changed
-    // Reason: This is an asynchronous operation so we should notify data set has changed
-    // after we finish seeing our LAST pokemon.
-    private fun getMorePokemonInfo(pokemon: Pokemon) {
-        val pokemonId = getId(pokemon.url)
-        pokemonService.getPokemonById(pokemonId).enqueue(object : Callback<PokemonInfo> {
-            override fun onResponse(call: Call<PokemonInfo>, response: Response<PokemonInfo>) {
-                Log.i(TAG, "onResponse $response")
-                val body = response.body()
-                if (body == null) {
-                    Log.w(TAG, "Did not receive valid response body from Pokemon API")
-                    return
+
+    private fun updateSpinnerWithNumber() {
+        val nationalDexList = mutableListOf<String>()
+        nationalDexList.add(0, "Show All")
+        for (i in 1..151) {
+            // nationalDexList.add("#${i.toString().padStart(3, '0')}")
+            nationalDexList.add(i.toString())
+        }
+        // Add number list as data source for the spinner
+        binding.spinnerNumber.attachDataSource(nationalDexList)
+        binding.spinnerNumber.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
+            val selectedId = parent.getItemAtPosition(position) as String
+            if (selectedId == "Show All") {
+                pokemons.clear()
+                for (i in 1..151) {
+                    queryPokemon(i.toString())
                 }
-                // Update pokemon with additional pokemon info
-                updatePokemonInfo(pokemon, body)
-                pokemon_seen += 1
-                // Add all pokemons once we finish "updating" our last pokemon, notify adapter
-                if (pokemon_seen == 20) {
-                    Log.i(TAG, "Notifying adapter changed")
-                    adapter.notifyDataSetChanged()
-                }
-            }
-
-            override fun onFailure(call: Call<PokemonInfo>, t: Throwable) {
-                Log.i(TAG, "onFailure $t")
-            }
-
-        })
-    }
-
-    private fun updatePokemonInfo(pokemon: Pokemon, pokemonInfo: PokemonInfo) {
-        pokemon.number = pokemonInfo.position
-        pokemon.sprite = pokemonInfo.sprites.versions.generation_viii.icons.sprite
-        for (types: PokemonTypes in pokemonInfo.types) {
-            // Pokemons only have 2 types
-            if (types.slot == 1) {
-                pokemon.type1 = types.type.name
-            }
-            else {
-                pokemon.type2 = types.type.name
+            } else {
+                getPokemonById(selectedId)
             }
         }
     }
 
-    private fun getId(url: String): String {
-        val urlParts = url.split("/").toTypedArray()
-        return urlParts[urlParts.size - 2]
+    private fun updateSpinnerWithName() {
+        val pokemonNameList = mutableListOf<String>()
+        pokemonNameList.add(0, "...")
+        for (pokemon in pokemons) {
+            pokemonNameList.add(pokemon.name)
+        }
+        pokemonNameList.sort()
+
+        binding.spinnerName.attachDataSource(pokemonNameList)
+        binding.spinnerName.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position) as String
+            if (selectedName == "...") {
+                pokemons.clear()
+                for (i in 1..151) {
+                    queryPokemon(i.toString())
+                }
+            } else {
+                getPokemonById(selectedName)
+            }
+
+        }
+    }
+
+    private fun updateSpinnerWithType() {
+        val typeList = mutableListOf("normal","fire", "water","grass", "electric", "ice",
+            "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost",
+            "dark", "dragon", "steel", "fairy")
+        typeList.sort()
+        typeList.add(0, "...")
+        binding.SpinnerType.attachDataSource(typeList)
+        binding.SpinnerType.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
+            val selectedType = parent.getItemAtPosition(position) as String
+            if (selectedType == "...") {
+                pokemons.clear()
+                for (i in 1..151) {
+                    queryPokemon(i.toString())
+                }
+            } else {
+                getPokemonByType(selectedType)
+            }
+        }
+
+    }
+
+    // Recall: If you want to filter 2 types, just select another type
+    private fun getPokemonByType(type: String) {
+        // Get list of pokemon with type x
+        val pokemonTypeList = mutableListOf<Pokemon>()
+        for (pokemon in pokemons) {
+            // Check if first type matches
+            if (type == pokemon.types[0].type.name) {
+                pokemonTypeList.add(pokemon)
+            }
+            // Check if second type matches
+            if (pokemon.isDualType()) {
+                if (type == pokemon.types[1].type.name) {
+                    pokemonTypeList.add(pokemon)
+                }
+            }
+        }
+        // Clear pokemons list
+        pokemons.clear()
+        // Add list of pokemon with type x to pokemons list
+        pokemons.addAll(pokemonTypeList)
+        // notify adapter changed
+        adapter.notifyDataSetChanged()
+    }
+
+    // Takes in id or name
+    private fun getPokemonById(id: String) {
+        // Clear pokemons list
+        pokemons.clear()
+        // Get api call for pokemon by id
+        queryPokemon(id)
     }
 }

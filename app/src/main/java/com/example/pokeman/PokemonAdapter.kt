@@ -38,14 +38,15 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
         private var chipType2 = itemView.findViewById<Chip>(R.id.chipType2)
 
         fun bind(pokemon: Pokemon) {
-            tvNumber.text = "#${pokemon.number.toString().padStart(3, '0')}"
+            tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
             tvName.text = pokemon.name
             Glide.with(context)
-                .load(pokemon.sprite)
+                .load(pokemon.sprites.versions.generation_viii.icons.sprite)
                 .into(ivSprite)
-            chipType1.text = pokemon.type1
-            if (pokemon.type2 != null) {
-                chipType2.text = pokemon.type2
+
+            chipType1.text = pokemon.types[0].type.name
+            if (pokemon.isDualType()) {
+                chipType2.text = pokemon.types[1].type.name
                 chipType2.visibility = View.VISIBLE
             } else {
                 chipType2.visibility = View.GONE
@@ -54,13 +55,13 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
         }
 
         private fun setupColors(pokemon: Pokemon) {
-            val textColor1 = getTextColor(pokemon.type1)
+            val textColor1 = getTextColor(pokemon.types[0].type.name)
             chipType1.setTextAppearanceResource(textColor1)
-            chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
-            if (pokemon.type2 != null) {
-                val textColor2 = getTextColor(pokemon.type2)
+            chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.types[0].type.name))
+            if (pokemon.isDualType()) {
+                val textColor2 = getTextColor(pokemon.types[1].type.name)
                 chipType2.setTextAppearance(textColor2)
-                chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
+                chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.types[1].type.name))
             }
         }
     }
@@ -68,25 +69,49 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
     // Color Utility
     private fun getTextColor(type: String): Int {
         return when (type) {
-            "grass" -> R.style.grass
-            "poison" -> R.style.poison
+            "normal" -> R.style.normal
             "fire" -> R.style.fire
-            "flying" -> R.style.flying
             "water" -> R.style.water
+            "grass" -> R.style.grass
+            "electric" -> R.style.electric
+            "ice" -> R.style.ice
+            "fighting" -> R.style.fighting
+            "poison" -> R.style.poison
+            "ground" -> R.style.ground
+            "flying" -> R.style.flying
+            "psychic" -> R.style.psychic
             "bug" -> R.style.bug
+            "rock" -> R.style.rock
+            "ghost" -> R.style.ghost
+            "dark" -> R.style.dark
+            "dragon" -> R.style.dragon
+            "steel" -> R.style.steel
+            "fairy" -> R.style.fairy
             else -> R.style.grass
         }
     }
 
     private fun getStrokeColor(type: String): Int {
         return when (type) {
-            "grass" -> R.color.grass
-            "poison" -> R.color.poison
+            "normal" -> R.color.normal
             "fire" -> R.color.fire
-            "flying" -> R.color.flying
             "water" -> R.color.water
+            "grass" -> R.color.grass
+            "electric" -> R.color.electric
+            "ice" -> R.color.ice
+            "fighting" -> R.color.fighting
+            "poison" -> R.color.poison
+            "ground" -> R.color.ground
+            "flying" -> R.color.flying
+            "psychic" -> R.color.psychic
             "bug" -> R.color.bug
-            else -> R.color.grass
+            "rock" -> R.color.rock
+            "ghost" -> R.color.ghost
+            "dark" -> R.color.dark
+            "dragon" -> R.color.dragon
+            "steel" -> R.color.steel
+            "fairy" -> R.color.fairy
+            else -> R.color.black
         }
     }
 

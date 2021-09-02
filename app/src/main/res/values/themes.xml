@@ -24,29 +24,77 @@
     </style>
 
     <!-- Pokemon's type colors -->
-    <style name="grass">
+    <style name="normal">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/grass</item>
-    </style>
-    <style name="poison">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/poison</item>
+        <item name="android:textColor">@color/normal</item>
     </style>
     <style name="fire">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/fire</item>
     </style>
-    <style name="flying">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/flying</item>
-    </style>
     <style name="water">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/water</item>
     </style>
+    <style name="grass">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/grass</item>
+    </style>
+    <style name="electric">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/electric</item>
+    </style>
+    <style name="ice">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ice</item>
+    </style>
+    <style name="fighting">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/fighting</item>
+    </style>
+    <style name="poison">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/poison</item>
+    </style>
+    <style name="ground">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ground</item>
+    </style>
+    <style name="flying">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/flying</item>
+    </style>
+    <style name="psychic">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/psychic</item>
+    </style>
     <style name="bug">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/bug</item>
+    </style>
+    <style name="rock">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/rock</item>
+    </style>
+    <style name="ghost">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ghost</item>
+    </style>
+    <style name="dark">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark</item>
+    </style>
+    <style name="dragon">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dragon</item>
+    </style>
+    <style name="steel">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/steel</item>
+    </style>
+    <style name="fairy">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/fairy</item>
     </style>
 
 </resources>
