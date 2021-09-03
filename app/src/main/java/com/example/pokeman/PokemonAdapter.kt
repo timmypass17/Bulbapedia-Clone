@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+
 
 class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
@@ -39,8 +41,11 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
         fun bind(pokemon: Pokemon) {
             tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
             tvName.text = pokemon.name
+
+            // Might remove transition
             Glide.with(context)
                 .load(pokemon.sprite)
+                .transition(withCrossFade())
                 .into(ivSprite)
 
             chipType1.text = pokemon.type1

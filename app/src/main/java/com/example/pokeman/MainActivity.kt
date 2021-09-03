@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +18,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+
+//TODO: 1.Clean up code, add ability to query new pokemons into db
+//      2. Create data class for generation?
+//      3. Add option to choose other generation
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: PokemonAdapter
     private var pokemons = mutableListOf<Pokemon>()
     private var pokemon_seen = 0
-    private var generation = "generation-i"
+    private var generation = Generation.GEN1 // Default generation init
 
     private val db = Firebase.firestore
 
@@ -42,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
         adapter = PokemonAdapter(this, pokemons)
         binding.rvPokemons.adapter = adapter
         binding.rvPokemons.layoutManager = LinearLayoutManager(this)
@@ -53,19 +56,14 @@ class MainActivity : AppCompatActivity() {
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
-        // Query first 151 pokemons
-        // for (i in 1..151) {
-        // queryPokemon(i.toString())
-        // }
-
-        // Initalize query
-        getPokemonFromFirebase(generation)
+        getPokemonFromFirebase(generation.generationName)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.mi_generation -> {
@@ -74,100 +72,64 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    private fun showChooseGenerationDialog() {
-        val generationView = LayoutInflater.from(this).inflate(R.layout.dialog_generation, null)
-        val radioGroupGen = generationView.findViewById<RadioGroup>(R.id.radioGroup)
-        // Precheck radio button
-        when (generation) {
-            "generation-i" -> radioGroupGen.check(R.id.rbGen1)
-            "generation-ii" -> radioGroupGen.check(R.id.rbGen2)
-            "generation-iii" -> radioGroupGen.check(R.id.rbGen3)
-        }
-        showAlertDialog("Choose generation", generationView, View.OnClickListener {
-            // Set a new value for the generation
-            generation = when (radioGroupGen.checkedRadioButtonId) {
-                R.id.rbGen1 -> "generation-i"
-                R.id.rbGen2 -> "generation-ii"
-                else -> "generation-iii"
-            }
-            // Saves pokemons into firebase, if exist do nothing
-            saveDataToFirebase(generation, pokemons)
-            // Update pokemons from this generation by querying from firebase
-            getPokemonFromFirebase(generation)
-        })
-    }
-
-    private fun getPokemonFromFirebase(generation: String) {
+    private fun getPokemonFromFirebase(generationName: String) {
         // Retrieve data from firebase
-        db.collection("pokemons").document(generation).get().addOnSuccessListener { document ->
+        db.collection("pokemons").document(generationName).get().addOnSuccessListener { document ->
             val pokemonList = document.toObject(PokemonList::class.java)
+            // If we do not have generation, do nothing
             if (pokemonList?.pokemons == null) {
-                Log.e(TAG, "Invalid custom game data from Firestore")
+                Log.e(TAG, "Invalid pokemon data from Firestore")
                 return@addOnSuccessListener
             }
-            updatePokemonData(pokemonList.pokemons.toMutableList())
-            // Make spinner query from firebase, not api
-            updateSpinnerWithNumber()
-            updateSpinnerWithName()
-            updateSpinnerWithType()
-            Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from $generation from Firebase!")
+            // Stores data from firebase and put it into our pokemons list and display data
+            displayPokemonData(pokemonList.pokemons.toMutableList())
+            Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from $generationName from Firebase!")
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception when retrieving game", exception)
         }
     }
 
-    private fun updatePokemonData(pokemonList: MutableList<Pokemon>) {
-        // Update pokemons
-        pokemons.clear()
-        Log.i(TAG, "Clearing pokemon data. Pokemon Size: ${pokemons.size}")
-        // Copy over pokemons
-        pokemons.addAll(pokemonList.toMutableList())
-        Log.i(TAG, "Updating pokemon data ${pokemons}. Pokemon Size: ${pokemons.size}")
-        adapter.notifyDataSetChanged()
+    private fun displayPokemonData(pokemonsList: MutableList<Pokemon>) {
+//        // Update pokemons
+//        pokemons.clear()
+//        // Copy over pokemon data from firebase query
+//        pokemons.addAll(pokemonList.toMutableList())
+//        adapter.notifyDataSetChanged()
+
+        // Update pokemons data with fresh data from firebase
+        pokemons = pokemonsList.toMutableList()
+        // Swap adapter dataset with new pokemon data
+        adapter = PokemonAdapter(this, pokemons)
+        binding.rvPokemons.adapter = adapter
+        // Update spinner information
+        updateSpinnerWithNumber()
+        updateSpinnerWithName()
+        updateSpinnerWithType()
     }
 
-    private fun saveDataToFirebase(generation: String, pokemons: MutableList<Pokemon>) {
-        var hasDataAlready = false
-        // Check we already have data from that generation
-        db.collection("pokemons").document(generation).get().addOnSuccessListener { document ->
-            if (document != null && document.data != null) {
-                Log.i(TAG, "We already added data in Firestore for: $generation")
-                hasDataAlready = true
-            }
-        }.addOnFailureListener { exception ->
-            Log.e(TAG, "Encountered error while getting document: $generation", exception)
-        }.addOnCompleteListener {
-            // If we have data already, do nothing
-            if (hasDataAlready) {
-                return@addOnCompleteListener
-            }
-            var firebaseFriendlyPokemon: Pokemon
-            val pokemonData = mutableListOf<Pokemon>()
-            for (pokemon in pokemons) {
-                firebaseFriendlyPokemon = if (pokemon.isDualType()) {
-                    Pokemon(pokemon.name, pokemon.id, pokemon.sprite, pokemon.type1, pokemon.type2)
-                } else {
-                    Pokemon(pokemon.name, pokemon.id, pokemon.sprite, pokemon.type1, "")
-                }
-                pokemonData.add(firebaseFriendlyPokemon)
-            }
-
-            // Add pokemon documents to firebase
-            db.collection("pokemons")
-                .document(generation)
-                .set(mapOf("pokemons" to pokemonData))
-                .addOnCompleteListener { pokemonCreationTask ->
-                    if (!pokemonCreationTask.isSuccessful) {
-                        Log.e(TAG, "Exception with game creation", pokemonCreationTask.exception)
-                        Toast.makeText(this, "failed game creation", Toast.LENGTH_SHORT).show()
-                        return@addOnCompleteListener
-                    }
-                    Log.i(TAG, "Successfully added pokemons ${pokemonData.size}")
-                }
+    private fun showChooseGenerationDialog() {
+        val generationView = LayoutInflater.from(this).inflate(R.layout.dialog_generation, null)
+        val radioGroupGen = generationView.findViewById<RadioGroup>(R.id.radioGroup)
+        // Precheck radio button
+        when (generation.generationName) {
+            "generation-i" -> radioGroupGen.check(R.id.rbGen1)
+            "generation-ii" -> radioGroupGen.check(R.id.rbGen2)
+            "generation-iii" -> radioGroupGen.check(R.id.rbGen3)
         }
+        // Radio generation on click listener
+        showAlertDialog("Choose generation", generationView, View.OnClickListener {
+            // Set a new value for the generation
+            generation = when (radioGroupGen.checkedRadioButtonId) {
+                R.id.rbGen1 -> Generation.GEN1
+                R.id.rbGen2 -> Generation.GEN2
+                else -> Generation.GEN3
+            }
+            // Saves pokemons into firebase, if we already have data for that generation do nothing
+//            saveDataToFirebase(generation.generationName, pokemons)
+            // Update pokemons from this generation by querying from firebase
+            getPokemonFromFirebase(generation.generationName)
+        })
     }
-
 
     private fun showAlertDialog(title: String, view: View?, positiveClickListener: View.OnClickListener) {
         AlertDialog.Builder(this)
@@ -179,45 +141,13 @@ class MainActivity : AppCompatActivity() {
             }.show()
     }
 
-    private fun queryPokemon(id: String) {
-        pokemonService.getPokemonById(id).enqueue(object : Callback<PokemonSearchResult> {
-            override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
-                Log.i(TAG, "onResponse $response")
-                val pokemonData = response.body()
-                if (pokemonData == null) {
-                    Log.w(TAG, "Did not receive valid response body from Pokemon API")
-                    return
-                }
-                // Convert PokemonSearchResult into Pokemon object
-                val pokemon: Pokemon
-                if (pokemonData.types.size == 2) {
-                    pokemon = Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, pokemonData.types[1].type.name)
-                } else {
-                    pokemon = Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, "")
-                }
-
-                pokemons.add(pokemon)
-                pokemon_seen+=1
-                pokemons.sortBy { it.id }
-                adapter.notifyDataSetChanged()
-                if (pokemon_seen == 151) {
-//                    saveDataToFirebase()
-                    updateSpinnerWithNumber()
-                    updateSpinnerWithName()
-                    updateSpinnerWithType()
-                }
-            }
-
-            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
-                Log.i(TAG, "onFailure $t")
-            }
-        })
-    }
 
     private fun updateSpinnerWithNumber() {
         val nationalDexList = mutableListOf<String>()
         nationalDexList.add(0, "...")
-        for (i in 1..151) {
+
+        val (start, end) = generation.getStartAndEnd()
+        for (i in start..end) {
             // nationalDexList.add("#${i.toString().padStart(3, '0')}")
             nationalDexList.add(i.toString())
         }
@@ -226,7 +156,9 @@ class MainActivity : AppCompatActivity() {
         binding.spinnerNumber.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
             val selectedId = parent.getItemAtPosition(position) as String
             if (selectedId == "...") {
-                getPokemonFromFirebase(generation)
+                // Swap adapter dataset with original pokemon data
+                adapter = PokemonAdapter(this, pokemons)
+                binding.rvPokemons.adapter = adapter
             } else {
                 getPokemonById(selectedId)
             }
@@ -245,26 +177,13 @@ class MainActivity : AppCompatActivity() {
         binding.spinnerName.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
             val selectedName = parent.getItemAtPosition(position) as String
             if (selectedName == "...") {
-                getPokemonFromFirebase(generation)
+                // Swap adapter dataset with original pokemon data
+                adapter = PokemonAdapter(this, pokemons)
+                binding.rvPokemons.adapter = adapter
             } else {
                 getPokemonByName(selectedName)
             }
 
-        }
-    }
-
-    private fun getPokemonByName(name: String) {
-        val pokemonWithName: Pokemon
-        for (pokemon in pokemons) {
-            if (name == pokemon.name) {
-                pokemonWithName = pokemon
-                // Clear pokemons list
-                pokemons.clear()
-                // Get single pokemon from do
-                pokemons.add(pokemonWithName)
-                adapter.notifyDataSetChanged()
-                break
-            }
         }
     }
 
@@ -278,7 +197,9 @@ class MainActivity : AppCompatActivity() {
         binding.SpinnerType.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
             val selectedType = parent.getItemAtPosition(position) as String
             if (selectedType == "...") {
-                getPokemonFromFirebase(generation)
+                // Swap adapter dataset with original pokemon data
+                adapter = PokemonAdapter(this, pokemons)
+                binding.rvPokemons.adapter = adapter
             } else {
                 getPokemonByType(selectedType)
             }
@@ -286,43 +207,115 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    // Recall: If you want to filter 2 types, just select another type
+    private fun getPokemonByName(name: String) {
+        val newPokemons = mutableListOf<Pokemon>()
+        for (pokemon in pokemons) {
+            if (name == pokemon.name) {
+                // Get single pokemon from do
+                newPokemons.add(pokemon)
+            }
+        }
+        // Swap adapter dataset with new data
+        adapter = PokemonAdapter(this, newPokemons)
+        binding.rvPokemons.adapter = adapter
+    }
+
     private fun getPokemonByType(type: String) {
         // Get list of pokemon with type x
-        val pokemonTypeList = mutableListOf<Pokemon>()
+        val pokemonsWithType = mutableListOf<Pokemon>()
         for (pokemon in pokemons) {
             // Check if first type matches
             if (type == pokemon.type1) {
-                pokemonTypeList.add(pokemon)
+                pokemonsWithType.add(pokemon)
             }
             // Check if second type matches
             if (pokemon.isDualType()) {
                 if (type == pokemon.type2) {
-                    pokemonTypeList.add(pokemon)
+                    pokemonsWithType.add(pokemon)
                 }
             }
         }
-        // Clear pokemons list
-        pokemons.clear()
-        // Add list of pokemon with type x to pokemons list
-        pokemons.addAll(pokemonTypeList)
-        // notify adapter changed
-        adapter.notifyDataSetChanged()
+        // Swap adapter dataset with new data
+        adapter = PokemonAdapter(this, pokemonsWithType)
+        binding.rvPokemons.adapter = adapter
     }
 
     // Takes in id or name
     private fun getPokemonById(id: String) {
-        val pokemonWithId: Pokemon
         for (pokemon in pokemons) {
             if (id == pokemon.id.toString()) {
-                pokemonWithId = pokemon
-                // Clear pokemons list
-                pokemons.clear()
-                // Get single pokemon from do
-                pokemons.add(pokemonWithId)
-                adapter.notifyDataSetChanged()
+                // Swap adapter dataset with new data
+                adapter = PokemonAdapter(this, listOf(pokemon))
+                binding.rvPokemons.adapter = adapter
                 break
             }
+        }
+    }
+
+
+    /** Not for client to use **/
+    // Use for querying data use api call. Not firebase
+    private fun queryPokemonFromGeneration(generationToQuery: Generation) {
+        generation = generationToQuery
+        val (start, end) = generationToQuery.getStartAndEnd()
+        for (i in start..end) {
+            queryPokemon(i.toString())
+        }
+    }
+
+    private fun queryPokemon(id: String) {
+        pokemonService.getPokemonById(id).enqueue(object : Callback<PokemonSearchResult> {
+            override fun onResponse(call: Call<PokemonSearchResult>, response: Response<PokemonSearchResult>) {
+                Log.i(TAG, "onResponse $response")
+                val pokemonData = response.body()
+                if (pokemonData == null) {
+                    Log.w(TAG, "Did not receive valid response body from Pokemon API")
+                    return
+                }
+                // Convert PokemonSearchResult into Pokemon object
+                val pokemon = if (pokemonData.types.size == 2) {
+                    Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, pokemonData.types[1].type.name)
+                } else {
+                    Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, "")
+                }
+                pokemons.add(pokemon)
+                pokemon_seen += 1
+                pokemons.sortBy { it.id }
+                adapter.notifyDataSetChanged()
+
+                // Once we queried everything, save it into firebase
+                if (pokemon_seen == generation.getTotalPokemon()) {
+                    saveDataToFirebase(generation.generationName, pokemons)
+                }
+            }
+
+            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
+                Log.i(TAG, "onFailure $t")
+            }
+        })
+    }
+
+    // We need a list of pokemon data before hand to use this method
+    private fun saveDataToFirebase(generationName: String, pokemons: MutableList<Pokemon>) {
+        // Check we already have data from that generation
+        db.collection("pokemons").document(generationName).get().addOnSuccessListener { document ->
+            // If we have data already, do nothing
+            if (document != null && document.data != null) {
+                Log.i(TAG, "We already added data in Firestore for: $generationName")
+                return@addOnSuccessListener
+            }
+            // Add pokemon documents to firebase
+            db.collection("pokemons").document(generationName)
+                .set(mapOf("pokemons" to pokemons))
+                .addOnCompleteListener { pokemonCreationTask ->
+                    if (!pokemonCreationTask.isSuccessful) {
+                        Log.e(TAG, "Exception with game creation", pokemonCreationTask.exception)
+                        return@addOnCompleteListener
+                    }
+                    Log.i(TAG, "Successfully added pokemons ${pokemons.size}")
+                }
+        }.addOnFailureListener { exception ->
+            Log.e(TAG, "Encountered error while getting document: $generationName", exception)
         }
     }
 }
