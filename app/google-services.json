@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "408257244419",
+    "project_id": "bulbapedia-cbefd",
+    "storage_bucket": "bulbapedia-cbefd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408257244419:android:b36dac6169beda09d60d36",
+        "android_client_info": {
+          "package_name": "com.example.pokeman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408257244419-8d5j8usjo673a2p7gtg5ekn20jn0fj9g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnvRi43fSDxn6rr9LDXgx_WFmYVnNjcGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408257244419-8d5j8usjo673a2p7gtg5ekn20jn0fj9g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

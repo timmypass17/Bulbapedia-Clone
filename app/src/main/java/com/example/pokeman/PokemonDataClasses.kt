@@ -1,15 +1,29 @@
 package com.example.pokeman
 
+import com.google.firebase.firestore.PropertyName
 import com.google.gson.annotations.SerializedName
 
-data class Pokemon(
+// not collection name
+data class PokemonList(
+    @PropertyName("pokemons") val pokemons: List<Pokemon>? = null
+)
+
+data class PokemonSearchResult(
     val name: String,
     var id: Int,
     val sprites: PokemonSprite,
     val types: List<PokemonTypes>
-) {
+)
+
+data class Pokemon(
+    val name: String = "",
+    val id: Int = 0,
+    val sprite: String = "",
+    val type1: String = "",
+    val type2: String = ""
+){
     fun isDualType(): Boolean {
-        if (types.size > 1) {
+        if (type2 != "") {
             return true
         }
         return false

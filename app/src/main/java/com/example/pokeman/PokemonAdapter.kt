@@ -22,7 +22,6 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val pokemon = pokemons[position]
-        Log.i("PokemonAdapter", "Binding ${pokemon.name} Position: $position")
         holder.bind(pokemon)
     }
 
@@ -41,12 +40,12 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
             tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
             tvName.text = pokemon.name
             Glide.with(context)
-                .load(pokemon.sprites.versions.generation_viii.icons.sprite)
+                .load(pokemon.sprite)
                 .into(ivSprite)
 
-            chipType1.text = pokemon.types[0].type.name
+            chipType1.text = pokemon.type1
             if (pokemon.isDualType()) {
-                chipType2.text = pokemon.types[1].type.name
+                chipType2.text = pokemon.type2
                 chipType2.visibility = View.VISIBLE
             } else {
                 chipType2.visibility = View.GONE
@@ -55,13 +54,13 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
         }
 
         private fun setupColors(pokemon: Pokemon) {
-            val textColor1 = getTextColor(pokemon.types[0].type.name)
+            val textColor1 = getTextColor(pokemon.type1)
             chipType1.setTextAppearanceResource(textColor1)
-            chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.types[0].type.name))
+            chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
             if (pokemon.isDualType()) {
-                val textColor2 = getTextColor(pokemon.types[1].type.name)
+                val textColor2 = getTextColor(pokemon.type2)
                 chipType2.setTextAppearance(textColor2)
-                chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.types[1].type.name))
+                chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
             }
         }
     }
