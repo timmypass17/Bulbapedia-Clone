@@ -1,18 +1,20 @@
 package com.example.pokeman
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-
 
 class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
@@ -31,29 +33,30 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        private val cardView = itemView.findViewById<CardView>(R.id.cardView)
         private val tvNumber = itemView.findViewById<TextView>(R.id.tvNumber)
         private val tvName = itemView.findViewById<TextView>(R.id.tvName)
         private val ivSprite = itemView.findViewById<ImageView>(R.id.ivSprite)
-        private val chipTypes = itemView.findViewById<ChipGroup>(R.id.chipTypes)
         private val chipType1 = itemView.findViewById<Chip>(R.id.chipType1)
-        private var chipType2 = itemView.findViewById<Chip>(R.id.chipType2)
+        private val chipType2 = itemView.findViewById<Chip>(R.id.chipType2)
 
         fun bind(pokemon: Pokemon) {
             tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
             tvName.text = pokemon.name
-
             // Might remove transition
-            Glide.with(context)
-                .load(pokemon.sprite)
-                .transition(withCrossFade())
-                .into(ivSprite)
-
+            Glide.with(context).load(pokemon.sprite).transition(withCrossFade()).into(ivSprite)
             chipType1.text = pokemon.type1
             if (pokemon.isDualType()) {
                 chipType2.text = pokemon.type2
                 chipType2.visibility = View.VISIBLE
             } else {
                 chipType2.visibility = View.GONE
+            }
+            // Navigate to details page
+            cardView.setOnClickListener {
+                val intent = Intent(context, PokemonDetailActivity::class.java)
+                intent.putExtra(EXTRA_POKEMON, pokemon)
+                context.startActivity(intent)
             }
             setupColors(pokemon)
         }

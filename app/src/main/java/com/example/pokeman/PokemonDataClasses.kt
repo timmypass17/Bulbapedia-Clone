@@ -1,7 +1,25 @@
 package com.example.pokeman
 
+import android.os.Parcelable
 import com.google.firebase.firestore.PropertyName
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Pokemon(
+    val name: String = "",
+    val id: Int = 0,
+    val sprite: String = "",
+    val type1: String = "",
+    val type2: String = ""
+) : Parcelable {
+    fun isDualType(): Boolean {
+        if (type2 != "") {
+            return true
+        }
+        return false
+    }
+}
 
 // not collection name
 data class PokemonList(
@@ -14,21 +32,6 @@ data class PokemonSearchResult(
     val sprites: PokemonSprite,
     val types: List<PokemonTypes>
 )
-
-data class Pokemon(
-    val name: String = "",
-    val id: Int = 0,
-    val sprite: String = "",
-    val type1: String = "",
-    val type2: String = ""
-){
-    fun isDualType(): Boolean {
-        if (type2 != "") {
-            return true
-        }
-        return false
-    }
-}
 
 data class PokemonSprite(
     val versions: PokemonVersions

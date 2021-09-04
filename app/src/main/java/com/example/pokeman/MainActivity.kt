@@ -19,11 +19,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-//TODO: 1.Clean up code, add ability to query new pokemons into db
-//      2. Create data class for generation?
-//      3. Add option to choose other generation
-
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -56,7 +51,11 @@ class MainActivity : AppCompatActivity() {
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
+        supportActionBar?.title = generation.generationName
         getPokemonFromFirebase(generation.generationName)
+
+        // For adding to database
+        // queryPokemonFromGeneration(Generation.GEN5)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,6 +82,8 @@ class MainActivity : AppCompatActivity() {
             }
             // Stores data from firebase and put it into our pokemons list and display data
             displayPokemonData(pokemonList.pokemons.toMutableList())
+            updateSpinnerData()
+            supportActionBar?.title = generation.generationName
             Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from $generationName from Firebase!")
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception when retrieving game", exception)
@@ -90,18 +91,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayPokemonData(pokemonsList: MutableList<Pokemon>) {
-//        // Update pokemons
-//        pokemons.clear()
-//        // Copy over pokemon data from firebase query
-//        pokemons.addAll(pokemonList.toMutableList())
-//        adapter.notifyDataSetChanged()
-
         // Update pokemons data with fresh data from firebase
         pokemons = pokemonsList.toMutableList()
         // Swap adapter dataset with new pokemon data
         adapter = PokemonAdapter(this, pokemons)
         binding.rvPokemons.adapter = adapter
-        // Update spinner information
+    }
+
+    private fun updateSpinnerData() {
+        // Update spinner data
         updateSpinnerWithNumber()
         updateSpinnerWithName()
         updateSpinnerWithType()
@@ -115,17 +113,25 @@ class MainActivity : AppCompatActivity() {
             "generation-i" -> radioGroupGen.check(R.id.rbGen1)
             "generation-ii" -> radioGroupGen.check(R.id.rbGen2)
             "generation-iii" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-iv" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-v" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-vi" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-vii" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-viii" -> radioGroupGen.check(R.id.rbGen3)
         }
         // Radio generation on click listener
-        showAlertDialog("Choose generation", generationView, View.OnClickListener {
-            // Set a new value for the generation
+        showAlertDialog("Choose a generation", generationView, View.OnClickListener {
+            // Update generation
             generation = when (radioGroupGen.checkedRadioButtonId) {
                 R.id.rbGen1 -> Generation.GEN1
                 R.id.rbGen2 -> Generation.GEN2
-                else -> Generation.GEN3
+                R.id.rbGen3 -> Generation.GEN3
+                R.id.rbGen4 -> Generation.GEN4
+                R.id.rbGen5 -> Generation.GEN5
+                R.id.rbGen6 -> Generation.GEN6
+                R.id.rbGen7 -> Generation.GEN7
+                else -> Generation.GEN8
             }
-            // Saves pokemons into firebase, if we already have data for that generation do nothing
-//            saveDataToFirebase(generation.generationName, pokemons)
             // Update pokemons from this generation by querying from firebase
             getPokemonFromFirebase(generation.generationName)
         })
@@ -183,7 +189,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 getPokemonByName(selectedName)
             }
-
         }
     }
 

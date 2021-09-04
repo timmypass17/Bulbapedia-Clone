@@ -33,5 +33,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Generation III" />
+
+        <RadioButton
+            android:id="@+id/rbGen4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generation IV" />
+
+        <RadioButton
+            android:id="@+id/rbGen5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generation V" />
+
+        <RadioButton
+            android:id="@+id/rbGen6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generation VI" />
+
+        <RadioButton
+            android:id="@+id/rbGen7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generation VII" />
+
+        <RadioButton
+            android:id="@+id/rbGen8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Generation VIII" />
     </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
