@@ -3,6 +3,8 @@ package com.example.pokeman
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import com.example.pokeman.data.Pokemon
+import com.example.pokeman.utilities.EXTRA_POKEMON
 
 class PokemonDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,20 +1,22 @@
-package com.example.pokeman
+package com.example.pokeman.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.example.pokeman.data.Pokemon
+import com.example.pokeman.PokemonDetailActivity
+import com.example.pokeman.R
+import com.example.pokeman.utilities.EXTRA_POKEMON
+import com.example.pokeman.utilities.isDualType
 
 class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
@@ -46,7 +48,7 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
             // Might remove transition
             Glide.with(context).load(pokemon.sprite).transition(withCrossFade()).into(ivSprite)
             chipType1.text = pokemon.type1
-            if (pokemon.isDualType()) {
+            if (isDualType(pokemon)) {
                 chipType2.text = pokemon.type2
                 chipType2.visibility = View.VISIBLE
             } else {
@@ -65,7 +67,7 @@ class PokemonAdapter(val context: Context, val pokemons: List<Pokemon>) :
             val textColor1 = getTextColor(pokemon.type1)
             chipType1.setTextAppearanceResource(textColor1)
             chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
-            if (pokemon.isDualType()) {
+            if (isDualType(pokemon)) {
                 val textColor2 = getTextColor(pokemon.type2)
                 chipType2.setTextAppearance(textColor2)
                 chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))

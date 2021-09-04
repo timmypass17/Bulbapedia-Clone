@@ -1,4 +1,4 @@
-package com.example.pokeman
+package com.example.pokeman.utilities
 
 enum class Generation(val generationName: String) {
     GEN1("generation-i"),
@@ -9,10 +9,6 @@ enum class Generation(val generationName: String) {
     GEN6("generation-vi"),
     GEN7("generation-vii"),
     GEN8("generation-viii");
-
-    companion object {
-        fun getByValue(value: String) = values().first { it.generationName == value }
-    }
 
     fun getTotalPokemon(): Int {
         return when (this) {

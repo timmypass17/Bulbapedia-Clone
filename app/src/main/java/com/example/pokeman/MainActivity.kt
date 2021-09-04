@@ -10,7 +10,16 @@ import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pokeman.adapters.PokemonAdapter
+import com.example.pokeman.api.PokemonService
+import com.example.pokeman.data.Pokemon
+import com.example.pokeman.data.PokemonAbilityResult
+import com.example.pokeman.data.PokemonList
+import com.example.pokeman.data.PokemonSearchResult
 import com.example.pokeman.databinding.ActivityMainBinding
+import com.example.pokeman.utilities.Generation
+import com.example.pokeman.utilities.getIdFromUrl
+import com.example.pokeman.utilities.isDualType
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import retrofit2.Call
@@ -52,10 +61,10 @@ class MainActivity : AppCompatActivity() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         supportActionBar?.title = generation.generationName
-        getPokemonFromFirebase(generation.generationName)
+//        getPokemonFromFirebase(generation.generationName)
 
         // For adding to database
-        // queryPokemonFromGeneration(Generation.GEN5)
+        queryPokemonFromGeneration(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -234,7 +243,7 @@ class MainActivity : AppCompatActivity() {
                 pokemonsWithType.add(pokemon)
             }
             // Check if second type matches
-            if (pokemon.isDualType()) {
+            if (isDualType(pokemon)) {
                 if (type == pokemon.type2) {
                     pokemonsWithType.add(pokemon)
                 }
@@ -263,7 +272,10 @@ class MainActivity : AppCompatActivity() {
     private fun queryPokemonFromGeneration(generationToQuery: Generation) {
         generation = generationToQuery
         val (start, end) = generationToQuery.getStartAndEnd()
-        for (i in start..end) {
+//        for (i in start..end) {
+//            queryPokemon(i.toString())
+//        }
+        for (i in 1..3) {
             queryPokemon(i.toString())
         }
     }
@@ -277,11 +289,59 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
                     return
                 }
+                // Once we get pokemon data, we make another request with the pokemon data's ability url to get the flavor text,
+                // then we create our pokemon object once we have all the components
+                val abilityId = getIdFromUrl(pokemonData.abilities[0].ability.url)
+                queryPokemonAbility(abilityId, pokemonData)
+            }
+
+            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
+                Log.i(TAG, "onFailure $t")
+            }
+        })
+    }
+
+
+
+    private fun queryPokemonAbility(id: String, pokemonData: PokemonSearchResult) {
+        pokemonService.getPokemonAbility(id).enqueue(object : Callback<PokemonAbilityResult> {
+            override fun onResponse(call: Call<PokemonAbilityResult>, response: Response<PokemonAbilityResult>) {
+                val pokemonAbilityData = response.body()
+                if (pokemonAbilityData == null) {
+                    Log.w(TAG, "Did not receive valid response body from Pokemon API")
+                    return
+                }
                 // Convert PokemonSearchResult into Pokemon object
+                // Creating stat map {"stat", base_stat}
+                val stat_map = mutableMapOf<String, Int>()
+                for (stat in pokemonData.stats) {
+                    stat_map[stat.stat_name.name] = stat.base_stat
+                }
+                // Create ability map {"name": "flavor_text}
+                val ability_map = mutableMapOf<String, String>()
+                for (pokemonAbility in pokemonData.abilities) {
+                    // We just want first ability description, the rest are in different language
+                    ability_map[pokemonAbility.ability.name] = pokemonAbilityData.ability_description[0].short_effect
+                }
+
                 val pokemon = if (pokemonData.types.size == 2) {
-                    Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, pokemonData.types[1].type.name)
+                    Pokemon(pokemonData.name,
+                        pokemonData.id,
+                        pokemonData.sprites.versions.generation_viii.icons.sprite,
+                        pokemonData.sprites.other.official_art.front_default,
+                        pokemonData.types[0].type.name,
+                        pokemonData.types[1].type.name,
+                        stat_map,
+                        ability_map)
                 } else {
-                    Pokemon(pokemonData.name, pokemonData.id, pokemonData.sprites.versions.generation_viii.icons.sprite, pokemonData.types[0].type.name, "")
+                    Pokemon(pokemonData.name,
+                        pokemonData.id,
+                        pokemonData.sprites.versions.generation_viii.icons.sprite,
+                        pokemonData.sprites.other.official_art.front_default,
+                        pokemonData.types[0].type.name,
+                        "",
+                        stat_map,
+                        ability_map)
                 }
                 pokemons.add(pokemon)
                 pokemon_seen += 1
@@ -289,14 +349,18 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
 
                 // Once we queried everything, save it into firebase
-                if (pokemon_seen == generation.getTotalPokemon()) {
+//                if (pokemon_seen == generation.getTotalPokemon()) {
+//                    saveDataToFirebase(generation.generationName, pokemons)
+//                }
+                if (pokemon_seen == 3) {
                     saveDataToFirebase(generation.generationName, pokemons)
                 }
             }
 
-            override fun onFailure(call: Call<PokemonSearchResult>, t: Throwable) {
-                Log.i(TAG, "onFailure $t")
+            override fun onFailure(call: Call<PokemonAbilityResult>, t: Throwable) {
+                TODO("Not yet implemented")
             }
+
         })
     }
 
