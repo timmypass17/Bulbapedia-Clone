@@ -17,5 +17,10 @@ class PokemonAbilityResult(
 )
 
 class PokemonAbilityDescription(
-    val short_effect: String
+    val short_effect: String,
+    val language: PokemonAbilityDescriptionLanguage
+)
+
+class PokemonAbilityDescriptionLanguage(
+    @SerializedName("name") val language_name: String
 )

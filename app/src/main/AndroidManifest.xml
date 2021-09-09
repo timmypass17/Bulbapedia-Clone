@@ -12,9 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokeman">
         <activity
-            android:name=".PokemonDetailActivity"
-            android:exported="true" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

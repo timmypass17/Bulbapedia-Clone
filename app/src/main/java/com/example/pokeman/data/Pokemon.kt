@@ -11,11 +11,12 @@ data class Pokemon(
     val name: String = "",
     val id: Int = 0,
     val sprite: String = "",
-    val official_art: String = "",
+    val icon: String = "",
     val type1: String = "",
     val type2: String = "",
     val stats: Map<String, Int>,
-    val abilities: Map<String, String>
+    val abilities: Map<String, String>,
+    val flavor_text: String = ""
 ) : Parcelable
 
 // not collection name

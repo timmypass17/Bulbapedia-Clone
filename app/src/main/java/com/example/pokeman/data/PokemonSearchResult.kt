@@ -8,10 +8,12 @@ data class PokemonSearchResult(
     val sprites: PokemonSprite,
     val types: List<PokemonTypes>,
     val stats: List<PokemonStats>,
-    val abilities: List<PokemonAbilities>
+    val abilities: List<PokemonAbilities>,
+    val species: PokemonSpecies
 )
 
 data class PokemonSprite(
+    val front_default: String,
     val versions: PokemonVersions,
     val other: PokemonOther
 )
@@ -33,7 +35,7 @@ data class PokemonGeneration(
 )
 
 data class PokemonIcon(
-    @SerializedName("front_default") val sprite: String
+    @SerializedName("front_default") val icon: String
 )
 
 data class PokemonTypes(
