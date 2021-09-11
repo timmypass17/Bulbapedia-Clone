@@ -51,7 +51,6 @@ class PokemonFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         adapter = PokemonAdapter(requireContext(), pokemons)
-
         binding.rvPokemons.adapter = adapter
         binding.rvPokemons.layoutManager = LinearLayoutManager(requireContext())
 
@@ -62,7 +61,9 @@ class PokemonFragment : Fragment() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         // For adding to database
-        queryPokemonFromGeneration(Generation.GEN1)
+//        queryPokemonFromGeneration(Generation.GEN1)
+
+        getPokemonFromFirebase(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -80,9 +81,9 @@ class PokemonFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getPokemonFromFirebase(generationName: String) {
+    private fun getPokemonFromFirebase(generation: Generation) {
         // Retrieve data from firebase
-        db.collection("pokemons").document(generationName).get().addOnSuccessListener { document ->
+        db.collection("pokemons").document(generation.generationName).get().addOnSuccessListener { document ->
             val pokemonList = document.toObject(PokemonList::class.java)
             // If we do not have generation, do nothing
             if (pokemonList?.pokemons == null) {
@@ -90,18 +91,18 @@ class PokemonFragment : Fragment() {
                 return@addOnSuccessListener
             }
             // Stores data from firebase and put it into our pokemons list and display data
-            displayPokemonData(pokemonList.pokemons.toMutableList())
+            // Update pokemons data with fresh data from firebase
+            pokemons = pokemonList.pokemons.toMutableList()
+            displayPokemonData(pokemons)
             updateSpinnerData()
-            // supportActionBar?.title = generation.generationName
-            Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from $generationName from Firebase!")
+//            supportActionBar?.title = generation.generationName
+            Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from ${generation.generationName} from Firebase!")
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception when retrieving game", exception)
         }
     }
 
-    private fun displayPokemonData(pokemonsList: MutableList<Pokemon>) {
-        // Update pokemons data with fresh data from firebase
-        pokemons = pokemonsList.toMutableList()
+    private fun displayPokemonData(pokemons: MutableList<Pokemon>) {
         // Swap adapter dataset with new pokemon data
         adapter = PokemonAdapter(requireContext(), pokemons)
         binding.rvPokemons.adapter = adapter
@@ -143,7 +144,7 @@ class PokemonFragment : Fragment() {
                 else -> Generation.GEN8
             }
             // Update pokemons from this generation by querying from firebase
-            getPokemonFromFirebase(generation.generationName)
+            getPokemonFromFirebase(generation)
         })
     }
 

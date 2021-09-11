@@ -3,7 +3,7 @@ package com.example.pokeman.utilities
 import com.example.pokeman.R
 
 // Color Utility
-fun getTextColor(type: String): Int {
+fun getTextStyle(type: String): Int {
     return when (type) {
         "normal" -> R.style.normal
         "fire" -> R.style.fire

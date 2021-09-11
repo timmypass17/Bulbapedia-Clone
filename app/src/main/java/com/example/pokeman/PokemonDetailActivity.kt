@@ -1,0 +1,99 @@
+package com.example.pokeman
+
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.pokeman.adapters.AbilityAdapter
+import com.example.pokeman.adapters.PokemonAdapter
+import com.example.pokeman.data.Pokemon
+import com.example.pokeman.databinding.ActivityPokemonDetailBinding
+import com.example.pokeman.utilities.EXTRA_POKEMON
+import com.example.pokeman.utilities.getStrokeColor
+import com.example.pokeman.utilities.getTextStyle
+import com.example.pokeman.utilities.isDualType
+
+class PokemonDetailActivity : AppCompatActivity() {
+    companion object {
+        private const val TAG = "PokemonDetailActivity"
+    }
+
+    private lateinit var binding: ActivityPokemonDetailBinding
+    private lateinit var adapter: AbilityAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding = ActivityPokemonDetailBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        val pokemon = intent.getParcelableExtra<Pokemon>(EXTRA_POKEMON)
+        if (pokemon != null) {
+            bind(pokemon)
+            adapter = AbilityAdapter(this, pokemon.abilities.toList())
+            binding.rvAbilities.adapter = adapter
+            binding.rvAbilities.layoutManager = LinearLayoutManager(this)
+        }
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun bind(pokemon: Pokemon) {
+        supportActionBar?.title = pokemon.name
+        // TODO: Click on image, change sprite to animated one
+        Glide.with(this).load(pokemon.sprite).into(binding.ivPokemon)
+        binding.tvName.text = pokemon.name
+        binding.tvDescription.text = pokemon.flavor_text
+        binding.chipType1.text = pokemon.type1
+        if (isDualType(pokemon)) {
+            binding.chipType2.text = pokemon.type2
+            binding.chipType2.visibility = View.VISIBLE
+        } else {
+            binding.chipType2.visibility = View.GONE
+        }
+        val textColor1 = getTextStyle(pokemon.type1)
+        binding.chipType1.setTextAppearanceResource(textColor1)
+        binding.chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
+        if (isDualType(pokemon)) {
+            val textColor2 = getTextStyle(pokemon.type2)
+            binding.chipType2.setTextAppearance(textColor2)
+            binding.chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
+        }
+
+        binding.tvHealth.text = pokemon.stats["hp"].toString()
+        binding.tvAttack.text = pokemon.stats["attack"].toString()
+        binding.tvDefense.text = pokemon.stats["defense"].toString()
+        binding.tvSAttack.text = pokemon.stats["special-attack"].toString()
+        binding.tvSDefense.text = pokemon.stats["special-defense"].toString()
+        binding.tvSpeed.text = pokemon.stats["speed"].toString()
+
+        pokemon.stats["hp"]?.let { binding.pgbHealth.progress = it }
+        pokemon.stats["attack"]?.let { binding.pgbAttack.progress = it }
+        pokemon.stats["defense"]?.let { binding.pgbDefense.progress = it }
+        pokemon.stats["special-attack"]?.let { binding.pgbSpecialAttack.progress = it }
+        pokemon.stats["special-defense"]?.let { binding.pgbSpecialDefense.progress = it }
+        pokemon.stats["speed"]?.let { binding.pgbSpeed.progress = it }
+
+        val colorInt = resources.getColor(getStrokeColor(pokemon.type1))
+        binding.pgbHealth.progressTintList = ColorStateList.valueOf(colorInt)
+        binding.pgbAttack.progressTintList = ColorStateList.valueOf(colorInt)
+        binding.pgbDefense.progressTintList = ColorStateList.valueOf(colorInt)
+        binding.pgbSpecialAttack.progressTintList = ColorStateList.valueOf(colorInt)
+        binding.pgbSpecialDefense.progressTintList = ColorStateList.valueOf(colorInt)
+        binding.pgbSpeed.progressTintList = ColorStateList.valueOf(colorInt)
+
+    }
+}

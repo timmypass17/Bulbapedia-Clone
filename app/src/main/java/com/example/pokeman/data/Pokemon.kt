@@ -14,8 +14,8 @@ data class Pokemon(
     val icon: String = "",
     val type1: String = "",
     val type2: String = "",
-    val stats: Map<String, Int>,
-    val abilities: Map<String, String>,
+    val stats: Map<String, Int> = mapOf(),
+    val abilities: Map<String, String> = mapOf(),
     val flavor_text: String = ""
 ) : Parcelable
 
