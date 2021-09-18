@@ -8,13 +8,8 @@
         android:title="Pokemons"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_berries"
+        android:id="@+id/action_items"
         android:icon="@drawable/ic_launcher_foreground"
-        android:title="Berries"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_tms"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="tms"
+        android:title="Items"
         app:showAsAction="always" />
 </menu>

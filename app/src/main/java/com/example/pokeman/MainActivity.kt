@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             val fragment = when (menuItem.itemId) {
                 R.id.action_pokemons -> PokemonFragment()
-                R.id.action_berries -> BerryFragment()
+                R.id.action_items -> BerryFragment()
 //                R.id.action_tms -> TmFragment()
                 else -> PokemonFragment()
             }

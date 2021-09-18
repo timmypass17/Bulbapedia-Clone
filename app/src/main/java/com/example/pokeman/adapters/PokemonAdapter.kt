@@ -14,6 +14,8 @@ import com.example.pokeman.PokemonDetailActivity
 import com.example.pokeman.R
 import com.example.pokeman.data.Pokemon
 import com.example.pokeman.utilities.EXTRA_POKEMON
+import com.example.pokeman.utilities.getStrokeColor
+import com.example.pokeman.utilities.getTextStyle
 import com.example.pokeman.utilities.isDualType
 import com.google.android.material.chip.Chip
 
@@ -58,6 +60,14 @@ class PokemonAdapter(
                 chipType2.visibility = View.VISIBLE
             } else {
                 chipType2.visibility = View.GONE
+            }
+            val textColor1 = getTextStyle(pokemon.type1)
+            chipType1.setTextAppearanceResource(textColor1)
+            chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
+            if (isDualType(pokemon)) {
+                val textColor2 = getTextStyle(pokemon.type2)
+                chipType2.setTextAppearance(textColor2)
+                chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
             }
             // Navigate to details page
             cardView.setOnClickListener {

@@ -19,4 +19,5 @@ interface PokemonService {
 
     @GET("pokemon-species/{id}")
     fun getPokemonSpecies(@Path("id") id: String) : Call<PokemonSpeciesResult>
+
 }

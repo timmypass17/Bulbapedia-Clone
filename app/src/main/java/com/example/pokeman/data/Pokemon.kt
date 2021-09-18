@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Pokemon(
     val name: String = "",
+    val genera: String = "",
     val id: Int = 0,
     val sprite: String = "",
     val icon: String = "",

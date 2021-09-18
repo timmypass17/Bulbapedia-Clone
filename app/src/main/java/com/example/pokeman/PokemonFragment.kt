@@ -32,8 +32,8 @@ class PokemonFragment : Fragment() {
     private lateinit var binding: FragmentPokemonBinding
     private lateinit var adapter: PokemonAdapter
     private var pokemons = mutableListOf<Pokemon>()
-    private var pokemon_seen = 0
     private var generation = Generation.GEN1 // Default generation init
+    private var pokemon_seen = 0
 
     private lateinit var retrofit: Retrofit
     private lateinit var pokemonService: PokemonService
@@ -61,9 +61,9 @@ class PokemonFragment : Fragment() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         // For adding to database
-//        queryPokemonFromGeneration(Generation.GEN1)
+        queryPokemonFromGeneration(Generation.GEN1)
 
-        getPokemonFromFirebase(Generation.GEN1)
+//        getPokemonFromFirebase(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -269,7 +269,7 @@ class PokemonFragment : Fragment() {
     }
 
 
-    /** Not for client to use **/
+    /** For querying api pokemon data into firebase **/
     // Use for querying data use api call. Not firebase
     private fun queryPokemonFromGeneration(generationToQuery: Generation) {
         generation = generationToQuery
@@ -318,7 +318,7 @@ class PokemonFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<PokemonAbilityResult>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "onFailure querying pokemon ability")
             }
 
         })
@@ -374,8 +374,19 @@ class PokemonFragment : Fragment() {
                 flavor_text.replace("POKéMON", "pokemon") // make spelling nicer
                 flavor_text += ".\"" // add period at end
 
+                // Get pokemon other name from pokemonSpeciesData
+                var other_name = ""
+                // Loop through genera names and find english name
+                for (genera in pokemonSpeciesData.genera) {
+                    if (genera.language.name == "en") {
+                        other_name = genera.genus;
+                        break
+                    }
+                }
+
                 val pokemon = if (pokemonData.types.size == 2) {
                     Pokemon(pokemonData.name,
+                        other_name,
                         pokemonData.id,
                         pokemonData.sprites.front_default,
                         pokemonData.sprites.versions.generation_viii.icons.icon,
@@ -386,6 +397,7 @@ class PokemonFragment : Fragment() {
                         flavor_text)
                 } else {
                     Pokemon(pokemonData.name,
+                        other_name,
                         pokemonData.id,
                         pokemonData.sprites.front_default,
                         pokemonData.sprites.versions.generation_viii.icons.icon,
@@ -405,6 +417,7 @@ class PokemonFragment : Fragment() {
 //                    saveDataToFirebase(generation.generationName, pokemons)
 //                }
                 if (pokemon_seen == 20) {
+                    Log.i(TAG, "Seen 20 pokemons, saving to firebase")
                     saveDataToFirebase(generation.generationName, pokemons)
                 }
             }

@@ -2,6 +2,7 @@ package com.example.pokeman.data
 
 import com.google.gson.annotations.SerializedName
 
+/** pokemon/{id} **/
 data class PokemonSearchResult(
     val name: String,
     val id: Int,
@@ -9,7 +10,8 @@ data class PokemonSearchResult(
     val types: List<PokemonTypes>,
     val stats: List<PokemonStats>,
     val abilities: List<PokemonAbilities>,
-    val species: PokemonSpecies
+    val species: PokemonSpecies,
+    val moves: List<PokemonMoves>
 )
 
 data class PokemonSprite(
@@ -22,11 +24,11 @@ data class PokemonVersions(
     @SerializedName("generation-vii") val generation_viii: PokemonGeneration
 )
 
-class PokemonOther(
+data class PokemonOther(
     @SerializedName("official-artwork") val official_art: PokemonOfficialArt
 )
 
-class PokemonOfficialArt(
+data class PokemonOfficialArt(
     val front_default: String
 )
 
@@ -46,3 +48,39 @@ data class PokemonTypes(
 data class PokemonType(
     val name: String
 )
+
+// {hp, atk, def, spatk,spdef, spd}
+data class PokemonStats(
+    val base_stat: Int,
+    @SerializedName("stat") val stat_name: PokemonStat
+)
+
+data class PokemonStat(
+    val name: String
+)
+
+// Moves
+data class PokemonMoves(
+    val move: PokemonMove
+)
+
+data class PokemonMove(
+    val url: String
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

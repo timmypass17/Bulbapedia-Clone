@@ -1,16 +1,23 @@
 package com.example.pokeman
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.ColorUtils
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.pokeman.adapters.AbilityAdapter
-import com.example.pokeman.adapters.PokemonAdapter
 import com.example.pokeman.data.Pokemon
 import com.example.pokeman.databinding.ActivityPokemonDetailBinding
 import com.example.pokeman.utilities.EXTRA_POKEMON
@@ -54,8 +61,29 @@ class PokemonDetailActivity : AppCompatActivity() {
     private fun bind(pokemon: Pokemon) {
         supportActionBar?.title = pokemon.name
         // TODO: Click on image, change sprite to animated one
-        Glide.with(this).load(pokemon.sprite).into(binding.ivPokemon)
+        Glide.with(this)
+            .asBitmap()
+            .load(pokemon.sprite)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                    return false;
+                }
+
+                override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    if (resource != null) {
+                        // Get color palette from pokemon sprite
+                        Palette.from(resource).generate { palette ->
+                            if (palette != null) {
+                                setPalette(palette)
+                            }
+                        }
+                    }
+                    return false;
+                }
+            })
+            .into(binding.ivPokemon)
         binding.tvName.text = pokemon.name
+        binding.tvGenera.text = pokemon.genera
         binding.tvDescription.text = pokemon.flavor_text
         binding.chipType1.text = pokemon.type1
         if (isDualType(pokemon)) {
@@ -95,5 +123,15 @@ class PokemonDetailActivity : AppCompatActivity() {
         binding.pgbSpecialDefense.progressTintList = ColorStateList.valueOf(colorInt)
         binding.pgbSpeed.progressTintList = ColorStateList.valueOf(colorInt)
 
+    }
+
+    private fun setPalette(palette: Palette) {
+        // Get the "vibrant" color swatch based on the bitmap
+        val vibrant = palette.vibrantSwatch
+        if (vibrant != null) {
+            // Change action bar color depending on pokemon's color palette
+            window.statusBarColor = vibrant.rgb
+            supportActionBar?.setBackgroundDrawable(ColorDrawable(ColorUtils.blendARGB(vibrant.rgb, Color.WHITE, 0.2f)))
+        }
     }
 }

@@ -21,48 +21,49 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/sprite_example" />
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPokemon"
-        tools:text="Bulbasaur" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvName">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_type_1"
+        <TextView
+            android:id="@+id/tvName"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:checkable="false"
-            android:textColor="@color/grass"
-            android:textSize="14sp"
-            app:chipStrokeColor="@color/grass"
-            tools:text="Grass" />
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivPokemon"
+            tools:text="bulbasaur" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_type_2"
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:checkable="false"
-            android:textColor="@color/poison"
-            android:textSize="14sp"
-            android:visibility="invisible"
-            app:chipStrokeColor="@color/poison"
-            tools:text="Poison"
-            tools:visibility="visible" />
-    </com.google.android.material.chip.ChipGroup>
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvGenera">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_type_1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checkable="false"
+                android:textColor="@color/grass"
+                android:textSize="14sp"
+                app:chipStrokeColor="@color/grass"
+                tools:text="Grass" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_type_2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checkable="false"
+                android:textColor="@color/poison"
+                android:textSize="14sp"
+                android:visibility="invisible"
+                app:chipStrokeColor="@color/poison"
+                tools:text="Poison"
+                tools:visibility="visible" />
+        </com.google.android.material.chip.ChipGroup>
 
     <TextView
         android:id="@+id/tvDescription"
@@ -78,28 +79,27 @@
         app:layout_constraintTop_toBottomOf="@+id/chipGroup"
         tools:text="A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON." />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/Health"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 
-    <TextView
-        android:id="@+id/Health"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="HP"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        <TextView
+            android:id="@+id/Health"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="HP"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
         android:id="@+id/Attack"
@@ -201,93 +201,114 @@
         app:layout_constraintStart_toStartOf="@+id/tvSAttack"
         app:layout_constraintTop_toTopOf="@+id/Speed" />
 
-    <ProgressBar
-        android:id="@+id/pgbHealth"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvHealth"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvHealth"
-        app:layout_constraintTop_toTopOf="@+id/tvHealth" />
+        <ProgressBar
+            android:id="@+id/pgbHealth"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHealth"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvHealth"
+            app:layout_constraintTop_toTopOf="@+id/tvHealth" />
 
-    <ProgressBar
-        android:id="@+id/pgbAttack"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvAttack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvAttack"
-        app:layout_constraintTop_toTopOf="@+id/tvAttack" />
+        <ProgressBar
+            android:id="@+id/pgbAttack"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAttack"
+            app:layout_constraintEnd_toEndOf="@+id/pgbHealth"
+            app:layout_constraintStart_toEndOf="@+id/tvAttack"
+            app:layout_constraintTop_toTopOf="@+id/tvAttack" />
 
-    <ProgressBar
-        android:id="@+id/pgbDefense"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvDefense"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvDefense"
-        app:layout_constraintTop_toTopOf="@+id/tvDefense" />
+        <ProgressBar
+            android:id="@+id/pgbDefense"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvDefense"
+            app:layout_constraintEnd_toEndOf="@+id/pgbAttack"
+            app:layout_constraintStart_toEndOf="@+id/tvDefense"
+            app:layout_constraintTop_toTopOf="@+id/tvDefense" />
 
-    <ProgressBar
-        android:id="@+id/pgbSpecialAttack"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvSAttack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvSAttack"
-        app:layout_constraintTop_toTopOf="@+id/tvSAttack" />
+        <ProgressBar
+            android:id="@+id/pgbSpecialAttack"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSAttack"
+            app:layout_constraintEnd_toEndOf="@+id/pgbDefense"
+            app:layout_constraintStart_toEndOf="@+id/tvSAttack"
+            app:layout_constraintTop_toTopOf="@+id/tvSAttack" />
 
-    <ProgressBar
-        android:id="@+id/pgbSpecialDefense"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvSDefense"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvSDefense"
-        app:layout_constraintTop_toTopOf="@+id/tvSDefense" />
+        <ProgressBar
+            android:id="@+id/pgbSpecialDefense"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSDefense"
+            app:layout_constraintEnd_toEndOf="@+id/pgbSpecialAttack"
+            app:layout_constraintStart_toEndOf="@+id/tvSDefense"
+            app:layout_constraintTop_toTopOf="@+id/tvSDefense" />
 
-    <ProgressBar
-        android:id="@+id/pgbSpeed"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="@+id/tvSpeed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvSpeed"
-        app:layout_constraintTop_toTopOf="@+id/tvSpeed" />
+        <ProgressBar
+            android:id="@+id/pgbSpeed"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSpeed"
+            app:layout_constraintEnd_toEndOf="@+id/pgbSpecialDefense"
+            app:layout_constraintStart_toEndOf="@+id/tvSpeed"
+            app:layout_constraintTop_toTopOf="@+id/tvSpeed" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="abilities"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Speed" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAbilities"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_ability" />
+
+        <TextView
+            android:id="@+id/tvGenera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Speed"
-            tools:listitem="@layout/item_ability" />
+            app:layout_constraintTop_toBottomOf="@+id/tvName"
+            tools:text="Seed Pokemon" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
