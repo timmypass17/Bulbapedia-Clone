@@ -1,6 +1,7 @@
 package com.example.pokeman.api
 
 import com.example.pokeman.data.PokemonAbilityResult
+import com.example.pokeman.data.PokemonItemResult
 import com.example.pokeman.data.PokemonSearchResult
 import com.example.pokeman.data.PokemonSpeciesResult
 import retrofit2.Call
@@ -20,4 +21,6 @@ interface PokemonService {
     @GET("pokemon-species/{id}")
     fun getPokemonSpecies(@Path("id") id: String) : Call<PokemonSpeciesResult>
 
+    @GET("item/{id}")
+    fun getPokemonItem(@Path("id") id: String) : Call<PokemonItemResult>
 }

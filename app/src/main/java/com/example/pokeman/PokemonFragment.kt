@@ -60,10 +60,10 @@ class PokemonFragment : Fragment() {
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
-        // For adding to database
-        queryPokemonFromGeneration(Generation.GEN1)
+        // For adding to database, uncommment bottom
+//        queryPokemonFromGeneration(Generation.GEN1)
 
-//        getPokemonFromFirebase(Generation.GEN1)
+        getPokemonFromFirebase(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
