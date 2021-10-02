@@ -43,7 +43,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tvGenera">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_1"
+                android:id="@+id/chipType1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checkable="false"
@@ -53,7 +53,7 @@
                 tools:text="Grass" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_2"
+                android:id="@+id/chipType2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:checkable="false"
@@ -66,7 +66,7 @@
         </com.google.android.material.chip.ChipGroup>
 
     <TextView
-        android:id="@+id/tvDescription"
+        android:id="@+id/tvFlavorText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -89,7 +89,7 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/tvFlavorText" />
 
         <TextView
             android:id="@+id/Health"

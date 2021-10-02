@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokeman.R
-import com.example.pokeman.data.Pokemon
 
 class AbilityAdapter(
     val context: Context,

@@ -61,9 +61,9 @@ class PokemonFragment : Fragment() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         // For adding to database, uncommment bottom
-//        queryPokemonFromGeneration(Generation.GEN1)
+        queryPokemonFromGeneration(Generation.GEN1)
 
-        getPokemonFromFirebase(Generation.GEN1)
+//        getPokemonFromFirebase(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -274,10 +274,7 @@ class PokemonFragment : Fragment() {
     private fun queryPokemonFromGeneration(generationToQuery: Generation) {
         generation = generationToQuery
         val (start, end) = generationToQuery.getStartAndEnd()
-//        for (i in start..end) {
-//            queryPokemon(i.toString())
-//        }
-        for (i in 1..20) {
+        for (i in start..end) {
             queryPokemon(i.toString())
         }
     }
@@ -330,6 +327,7 @@ class PokemonFragment : Fragment() {
                 val pokemonSpeciesData = response.body()
                 if (pokemonSpeciesData == null) {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
+                    pokemon_seen += 1 // TODO: maybe remove?
                     return
                 }
                 // Convert PokemonSearchResult into Pokemon object
@@ -416,7 +414,7 @@ class PokemonFragment : Fragment() {
 //                if (pokemon_seen == generation.getTotalPokemon()) {
 //                    saveDataToFirebase(generation.generationName, pokemons)
 //                }
-                if (pokemon_seen == 20) {
+                if (pokemon_seen == generation.getTotalPokemon()) {
                     Log.i(TAG, "Seen 20 pokemons, saving to firebase")
                     saveDataToFirebase(generation.generationName, pokemons)
                 }
@@ -439,7 +437,8 @@ class PokemonFragment : Fragment() {
                 return@addOnSuccessListener
             }
             // Add pokemon documents to firebase
-            db.collection("pokemons").document(generationName)
+            db.collection("pokemons")
+                .document(generationName)
                 .set(mapOf("pokemons" to pokemons))
                 .addOnCompleteListener { pokemonCreationTask ->
                     if (!pokemonCreationTask.isSuccessful) {

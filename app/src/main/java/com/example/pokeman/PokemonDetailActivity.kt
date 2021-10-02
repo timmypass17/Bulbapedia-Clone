@@ -84,7 +84,7 @@ class PokemonDetailActivity : AppCompatActivity() {
             .into(binding.ivPokemon)
         binding.tvName.text = pokemon.name
         binding.tvGenera.text = pokemon.genera
-        binding.tvDescription.text = pokemon.flavor_text
+        binding.tvFlavorText.text = pokemon.flavor_text
         binding.chipType1.text = pokemon.type1
         if (isDualType(pokemon)) {
             binding.chipType2.text = pokemon.type2

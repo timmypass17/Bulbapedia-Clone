@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/ivLoot"
+        android:id="@+id/ivBerrySprite"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="16dp"
