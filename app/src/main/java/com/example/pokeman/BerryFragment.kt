@@ -60,6 +60,7 @@ class BerryFragment : Fragment() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         getBerriesFromFirebase()
+
 //        for (i in 1..954) {
 //            queryPokemonItem(i.toString());
 //        }
@@ -77,6 +78,7 @@ class BerryFragment : Fragment() {
                     berries.clear()
                     berries.addAll(original_berries)
                     adapter.notifyDataSetChanged()
+                    binding.tvBerryTotal.text = "Total Items: ${original_berries.size}"
                     return true
                 }
 
@@ -88,6 +90,7 @@ class BerryFragment : Fragment() {
                         berries_search.add(berry)
                     }
                 }
+                binding.tvBerryTotal.text = "Total Items: ${berries_search.size}"
                 // update adapter dataset
                 berries.clear()
                 berries.addAll(berries_search)
@@ -107,6 +110,10 @@ class BerryFragment : Fragment() {
                 return@addOnSuccessListener
             }
             Log.i(TAG, "Getting berries from fb")
+
+            // intialize berry count
+            binding.tvBerryTotal.text = "Total Items: ${berryData.berries.size}"
+
             // Add data to adapter
             berries.addAll(berryData.berries.toMutableList())
             original_berries = berryData.berries.toMutableList()
