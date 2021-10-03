@@ -52,8 +52,14 @@ class PokemonAdapter(
         fun bind(pokemon: Pokemon) {
             tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
             tvName.text = pokemon.name
-            // Might remove transition
-            Glide.with(context).load(pokemon.icon).transition(withCrossFade()).into(ivSprite)
+            // missing icon
+            if (pokemon.icon == "") {
+                Glide.with(context).load("https://cdn2.bulbagarden.net/upload/a/ab/000MS.png").transition(withCrossFade()).into(ivSprite)
+            } else {
+                // Might remove transition
+                Glide.with(context).load(pokemon.icon).transition(withCrossFade()).into(ivSprite)
+            }
+
             chipType1.text = pokemon.type1
             if (isDualType(pokemon)) {
                 chipType2.text = pokemon.type2
@@ -69,6 +75,7 @@ class PokemonAdapter(
                 chipType2.setTextAppearance(textColor2)
                 chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
             }
+
             // Navigate to details page
             cardView.setOnClickListener {
                 val intent = Intent(context, PokemonDetailActivity::class.java).apply {

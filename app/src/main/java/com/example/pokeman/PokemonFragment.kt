@@ -22,6 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+//TODO: 1. GEN7 and GEN8 not working. pokemon 808 meltan not working?
 class PokemonFragment : Fragment() {
 
     companion object {
@@ -61,9 +62,9 @@ class PokemonFragment : Fragment() {
         pokemonService = retrofit.create(PokemonService::class.java)
 
         // For adding to database, uncommment bottom
-        queryPokemonFromGeneration(Generation.GEN1)
+//        queryPokemonFromGeneration(Generation.GEN8)
 
-//        getPokemonFromFirebase(Generation.GEN1)
+        getPokemonFromFirebase(Generation.GEN1)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -207,7 +208,7 @@ class PokemonFragment : Fragment() {
         val typeList = mutableListOf("normal","fire", "water","grass", "electric", "ice",
             "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost",
             "dark", "dragon", "steel", "fairy")
-        typeList.sort()
+//        typeList.sort()
         typeList.add(0, "...")
         binding.SpinnerType.attachDataSource(typeList)
         binding.SpinnerType.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
@@ -288,6 +289,7 @@ class PokemonFragment : Fragment() {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
                     return
                 }
+
                 // Once we get pokemon data, we make another request with the pokemon data's ability url to get the flavor text,
                 // then we create our pokemon object once we have all the components
                 val abilityId = getIdFromUrl(pokemonData.abilities[0].ability.url)
@@ -325,6 +327,7 @@ class PokemonFragment : Fragment() {
         pokemonService.getPokemonSpecies(id).enqueue(object : Callback<PokemonSpeciesResult> {
             override fun onResponse(call: Call<PokemonSpeciesResult>, response: Response<PokemonSpeciesResult>) {
                 val pokemonSpeciesData = response.body()
+                Log.w(TAG, "Pokemon: ${pokemonData.name}")
                 if (pokemonSpeciesData == null) {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
                     pokemon_seen += 1 // TODO: maybe remove?
@@ -382,28 +385,72 @@ class PokemonFragment : Fragment() {
                     }
                 }
 
+
+                if (pokemonData.name == "meltan") {
+                    Log.i(TAG, "Name: ${pokemonData.name}")
+                    Log.i(TAG, "Genera: $other_name")
+                    Log.i(TAG, "Sprite: ${pokemonData.sprites.front_default}")
+                    Log.i(TAG, "Icon: ${pokemonData.sprites.versions.generation_viii.icons.icon}")
+                    Log.i(TAG, "Type 1: ${pokemonData.types[0].type.name}")
+                    if (pokemonData.types.size == 2) {
+                        Log.i(TAG, "Type 2: ${pokemonData.types[1].type.name}")
+                    }
+                    Log.i(TAG, "Stats: $stat_map")
+                    Log.i(TAG, "Ability: $ability_map")
+                    Log.i(TAG, "Flavor_Text: $flavor_text")
+                }
+
+                // TODO: for some reason, i get icon = null for meltan 808??
+                // TODO: I fucked up icon somewhere
                 val pokemon = if (pokemonData.types.size == 2) {
-                    Pokemon(pokemonData.name,
-                        other_name,
-                        pokemonData.id,
-                        pokemonData.sprites.front_default,
-                        pokemonData.sprites.versions.generation_viii.icons.icon,
-                        pokemonData.types[0].type.name,
-                        pokemonData.types[1].type.name,
-                        stat_map,
-                        ability_map,
-                        flavor_text)
+                    if (pokemonData.sprites.versions.generation_viii.icons.icon != null) {
+                        Pokemon(
+                            name = pokemonData.name,
+                            genera = other_name,
+                            id = pokemonData.id,
+                            sprite = pokemonData.sprites.front_default,
+                            icon = pokemonData.sprites.versions.generation_viii.icons.icon,
+                            type1 = pokemonData.types[0].type.name,
+                            type2 = pokemonData.types[1].type.name,
+                            stats = stat_map,
+                            abilities = ability_map,
+                            flavor_text = flavor_text)
+                    }
+                    else {
+                        Pokemon(
+                            name = pokemonData.name,
+                            genera = other_name,
+                            id = pokemonData.id,
+                            sprite = pokemonData.sprites.front_default,
+                            type1 = pokemonData.types[0].type.name,
+                            type2 = pokemonData.types[1].type.name,
+                            stats = stat_map,
+                            abilities = ability_map,
+                            flavor_text = flavor_text)
+                    }
                 } else {
-                    Pokemon(pokemonData.name,
-                        other_name,
-                        pokemonData.id,
-                        pokemonData.sprites.front_default,
-                        pokemonData.sprites.versions.generation_viii.icons.icon,
-                        pokemonData.types[0].type.name,
-                        "",
-                        stat_map,
-                        ability_map,
-                        flavor_text)
+                    if (pokemonData.sprites.versions.generation_viii.icons.icon != null) {
+                        Pokemon(
+                            name = pokemonData.name,
+                            genera = other_name,
+                            id = pokemonData.id,
+                            sprite = pokemonData.sprites.front_default,
+                            icon = pokemonData.sprites.versions.generation_viii.icons.icon,
+                            type1 = pokemonData.types[0].type.name,
+                            stats = stat_map,
+                            abilities = ability_map,
+                            flavor_text = flavor_text)
+                    } else {
+                        Pokemon(
+                            name = pokemonData.name,
+                            genera = other_name,
+                            id = pokemonData.id,
+                            sprite = pokemonData.sprites.front_default,
+                            type1 = pokemonData.types[0].type.name,
+                            stats = stat_map,
+                            abilities = ability_map,
+                            flavor_text = flavor_text)
+                    }
                 }
                 pokemons.add(pokemon)
                 pokemon_seen += 1
@@ -417,6 +464,7 @@ class PokemonFragment : Fragment() {
                 if (pokemon_seen == generation.getTotalPokemon()) {
                     Log.i(TAG, "Seen 20 pokemons, saving to firebase")
                     saveDataToFirebase(generation.generationName, pokemons)
+                    pokemon_seen = 0
                 }
             }
 

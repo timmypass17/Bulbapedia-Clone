@@ -11,16 +11,8 @@ enum class Generation(val generationName: String) {
     GEN8("generation-viii");
 
     fun getTotalPokemon(): Int {
-        return when (this) {
-            GEN1 -> 151
-            GEN2 -> 100
-            GEN3 -> 135
-            GEN4 -> 107
-            GEN5 -> 156
-            GEN6 -> 72
-            GEN7 -> 88
-            GEN8 -> 91
-        }
+        val (start, end) = this.getStartAndEnd()
+        return (end - start + 1)
     }
 
     fun getStartAndEnd(): Pair<Int, Int> {
@@ -32,7 +24,7 @@ enum class Generation(val generationName: String) {
             GEN5 -> Pair(494, 649)
             GEN6 -> Pair(650, 721)
             GEN7 -> Pair(722, 809)
-            GEN8 -> Pair(810, 900)
+            GEN8 -> Pair(810, 898)
         }
     }
 }

@@ -95,7 +95,7 @@ class PokemonDetailActivity : AppCompatActivity() {
         val textColor1 = getTextStyle(pokemon.type1)
         binding.chipType1.setTextAppearanceResource(textColor1)
         binding.chipType1.setChipStrokeColorResource(getStrokeColor(pokemon.type1))
-        if (isDualType(pokemon)) {
+        if (isDualType(pokemon) || pokemon.type2 != null) {
             val textColor2 = getTextStyle(pokemon.type2)
             binding.chipType2.setTextAppearance(textColor2)
             binding.chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
