@@ -26,6 +26,7 @@ class PokemonAdapter(
 
     companion object {
         private const val TAG = "PokemonAdapter"
+        private const val MISSING_ICON_URL = "https://cdn2.bulbagarden.net/upload/a/ab/000MS.png"
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -50,11 +51,12 @@ class PokemonAdapter(
         private val chipType2 = itemView.findViewById<Chip>(R.id.chipType2)
 
         fun bind(pokemon: Pokemon) {
-            tvNumber.text = "#${pokemon.id.toString().padStart(3, '0')}"
+            val pokemonNum = "#${pokemon.id.toString().padStart(3, '0')}"
+            tvNumber.text = pokemonNum
             tvName.text = pokemon.name
             // missing icon
             if (pokemon.icon == "") {
-                Glide.with(context).load("https://cdn2.bulbagarden.net/upload/a/ab/000MS.png").transition(withCrossFade()).into(ivSprite)
+                Glide.with(context).load(MISSING_ICON_URL).transition(withCrossFade()).into(ivSprite)
             } else {
                 // Might remove transition
                 Glide.with(context).load(pokemon.icon).transition(withCrossFade()).into(ivSprite)

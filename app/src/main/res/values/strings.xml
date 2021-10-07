@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">pokeman</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="choose_gen">Choose a generation</string>
+    <string name="btn_neg">Cancel</string>
+    <string name="btn_pos">OK</string>
+    <string name="total_items">Total Items: %d</string>
+    <string name="cannot_be_purchased">Can\'t be purchased</string>
 </resources>

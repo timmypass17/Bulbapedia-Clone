@@ -9,7 +9,6 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pokeman.adapters.BerryAdapter
-import com.example.pokeman.adapters.PokemonAdapter
 import com.example.pokeman.api.PokemonService
 import com.example.pokeman.data.BerryList
 import com.example.pokeman.data.PokemonItem
@@ -33,7 +32,7 @@ class BerryFragment : Fragment() {
     private lateinit var binding: FragmentBerryBinding
     private lateinit var adapter: BerryAdapter
     private var berries = mutableListOf<PokemonItem>()
-    private var original_berries = mutableListOf<PokemonItem>()
+    private var originalBerries = mutableListOf<PokemonItem>()
     private var berryCount = 0
 
     private lateinit var retrofit: Retrofit
@@ -49,16 +48,20 @@ class BerryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up adapter
         adapter = BerryAdapter(requireContext(), berries)
         binding.rvBerries.adapter = adapter
         binding.rvBerries.layoutManager = GridLayoutManager(requireContext(),5)
 
+        // Set up retrofit
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
+        // Get pokemon items from firebase
         getBerriesFromFirebase()
 
 //        for (i in 1..954) {
@@ -76,24 +79,30 @@ class BerryFragment : Fragment() {
                 // if query is empty, show all berries
                 if (newText.toString().isEmpty()) {
                     berries.clear()
-                    berries.addAll(original_berries)
+                    berries.addAll(originalBerries)
                     adapter.notifyDataSetChanged()
-                    binding.tvBerryTotal.text = "Total Items: ${original_berries.size}"
+                    // Update total text
+                    val totalText = getString(R.string.total_items)
+                    binding.tvBerryTotal.text = String.format(totalText, originalBerries.size)
                     return true
                 }
 
                 // else, create temp berry list to update adapter dataset
-                val berries_search = mutableListOf<PokemonItem>()
-                for (berry in original_berries){
+                val berriesSearch = mutableListOf<PokemonItem>()
+                for (berry in originalBerries){
                     // get berries that match search query
                     if (newText.toString() in berry.name || newText.toString() in berry.category) {
-                        berries_search.add(berry)
+                        berriesSearch.add(berry)
                     }
                 }
-                binding.tvBerryTotal.text = "Total Items: ${berries_search.size}"
+                // TODO: Add covid tracker spinning number effect
+                // Update total text
+                val totalText = getString(R.string.total_items)
+                binding.tvBerryTotal.text = String.format(totalText, berriesSearch.size)
+
                 // update adapter dataset
                 berries.clear()
-                berries.addAll(berries_search)
+                berries.addAll(berriesSearch)
                 adapter.notifyDataSetChanged()
                 return true
             }
@@ -112,11 +121,12 @@ class BerryFragment : Fragment() {
             Log.i(TAG, "Getting berries from fb")
 
             // intialize berry count
-            binding.tvBerryTotal.text = "Total Items: ${berryData.berries.size}"
+            val totalText = getString(R.string.total_items)
+            binding.tvBerryTotal.text = String.format(totalText, berryData.berries.size)
 
             // Add data to adapter
             berries.addAll(berryData.berries.toMutableList())
-            original_berries = berryData.berries.toMutableList()
+            originalBerries = berryData.berries.toMutableList()
             adapter.notifyDataSetChanged()
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception when retrieving berries")
@@ -130,49 +140,48 @@ class BerryFragment : Fragment() {
                 val berryData = response.body()
                 if (berryData == null) {
                     Log.w(TAG, "Did not receive valid response body from Pokemon API")
-                    berryCount += 1 // TODO: remove this later, for some reason the api doesnt have some berry id
+                    berryCount += 1
                     return
                 }
                 //TODO: 1. fix awkward extra space (should add newline)
                 //      2. some needs a space
 
-                // Reformat text (remove akward newline)
-                var effect_text_list = mutableListOf<Char>()
+                // Reformat text (remove awkward newline)
+                val effectList = mutableListOf<Char>()
                 for (c in berryData.effect_entries[0].effect) {
                     if (c != '\n'){
-                        effect_text_list.add(c)
+                        effectList.add(c)
                     }
                 }
-                val effect_text = effect_text_list.joinToString("")
+                val effectText = effectList.joinToString("")
 
-                var flavor_text = ""
+                var flavorText = ""
                 // Get recent english text
                 for (text in berryData.flavor_text_entries.reversed()) {
                     if (text.language.name == "en") {
-                        flavor_text = text.text
+                        flavorText = text.text
                         break
                     }
                 }
 
-                val flavor_text_list = mutableListOf<Char>()
-                for (c in flavor_text) {
+                val flavorList = mutableListOf<Char>()
+                for (c in flavorText) {
                     if (c != '\n'){
-                        flavor_text_list.add(c)
+                        flavorList.add(c)
                     }
                 }
-                flavor_text = flavor_text_list.joinToString("")
+                flavorText = flavorList.joinToString("")
 
                 val berry = PokemonItem(
                     name = berryData.name,
                     cost = berryData.cost,
-                    effect = effect_text,
+                    effect = effectText,
                     sprite = berryData.sprites.default,
-                    flavor_text = flavor_text,
+                    flavor_text = flavorText,
                     category = berryData.category.name
                 )
                 berries.add(berry)
                 berryCount += 1
-//                adapter.notifyDataSetChanged()
                 // Once we seen all the queries, save it to firebase
                 if (berryCount == 954) {
                     Log.i(TAG, "Seen 954 berries, saving to firebase")
@@ -181,7 +190,7 @@ class BerryFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<PokemonItemResult>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "onFailure $t")
             }
         })
     }
@@ -205,7 +214,6 @@ class BerryFragment : Fragment() {
                 }
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Encountered error while getting document: berries", exception)
-
         }
     }
 }

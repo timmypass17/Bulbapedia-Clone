@@ -18,17 +18,17 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        // Bottom nav on click listener to change screen
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             val fragment = when (menuItem.itemId) {
                 R.id.action_pokemons -> PokemonFragment()
                 R.id.action_items -> BerryFragment()
-//                R.id.action_tms -> TmFragment()
                 else -> PokemonFragment()
             }
-            supportFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit() // swap screen
             true
         }
-        binding.bottomNavigation.selectedItemId = R.id.action_pokemons
+        binding.bottomNavigation.selectedItemId = R.id.action_pokemons  // default screen
     }
 
 

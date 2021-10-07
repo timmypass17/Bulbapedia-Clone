@@ -22,7 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-//TODO: 1. GEN7 and GEN8 not working. pokemon 808 meltan not working?
+// Note: some icons are null
 class PokemonFragment : Fragment() {
 
     companion object {
@@ -51,20 +51,24 @@ class PokemonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+
+        // Set up adapter
         adapter = PokemonAdapter(requireContext(), pokemons)
         binding.rvPokemons.adapter = adapter
         binding.rvPokemons.layoutManager = LinearLayoutManager(requireContext())
 
+        // Set up retrofit
         retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         pokemonService = retrofit.create(PokemonService::class.java)
 
-        // For adding to database, uncommment bottom
-//        queryPokemonFromGeneration(Generation.GEN8)
-
+        // Display pokemon data
         getPokemonFromFirebase(Generation.GEN1)
+
+        // For adding to database, uncommment bottom
+        // queryPokemonFromGeneration(Generation.GEN8)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -96,7 +100,6 @@ class PokemonFragment : Fragment() {
             pokemons = pokemonList.pokemons.toMutableList()
             displayPokemonData(pokemons)
             updateSpinnerData()
-//            supportActionBar?.title = generation.generationName
             Log.i(TAG, "Succesfully got ${pokemons.size} pokemons from ${generation.generationName} from Firebase!")
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception when retrieving game", exception)
@@ -120,19 +123,21 @@ class PokemonFragment : Fragment() {
         Log.i(TAG, "Showing option menus")
         val generationView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_generation, null)
         val radioGroupGen = generationView.findViewById<RadioGroup>(R.id.radioGroup)
-        // Precheck radio button
+
+        // Pre-check radio button
         when (generation.generationName) {
             "generation-i" -> radioGroupGen.check(R.id.rbGen1)
             "generation-ii" -> radioGroupGen.check(R.id.rbGen2)
             "generation-iii" -> radioGroupGen.check(R.id.rbGen3)
-            "generation-iv" -> radioGroupGen.check(R.id.rbGen3)
-            "generation-v" -> radioGroupGen.check(R.id.rbGen3)
-            "generation-vi" -> radioGroupGen.check(R.id.rbGen3)
-            "generation-vii" -> radioGroupGen.check(R.id.rbGen3)
-            "generation-viii" -> radioGroupGen.check(R.id.rbGen3)
+            "generation-iv" -> radioGroupGen.check(R.id.rbGen4)
+            "generation-v" -> radioGroupGen.check(R.id.rbGen5)
+            "generation-vi" -> radioGroupGen.check(R.id.rbGen6)
+            "generation-vii" -> radioGroupGen.check(R.id.rbGen7)
+            "generation-viii" -> radioGroupGen.check(R.id.rbGen8)
         }
+
         // Radio generation on click listener
-        showAlertDialog("Choose a generation", generationView, View.OnClickListener {
+        showAlertDialog(getString(R.string.choose_gen), generationView, View.OnClickListener {
             // Update generation
             generation = when (radioGroupGen.checkedRadioButtonId) {
                 R.id.rbGen1 -> Generation.GEN1
@@ -153,8 +158,8 @@ class PokemonFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setView(view)
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("OK") { _, _ ->
+            .setNegativeButton(getString(R.string.btn_neg), null)
+            .setPositiveButton(getString(R.string.btn_pos)) { _, _ ->
                 positiveClickListener.onClick(null)
             }.show()
     }
@@ -166,7 +171,6 @@ class PokemonFragment : Fragment() {
 
         val (start, end) = generation.getStartAndEnd()
         for (i in start..end) {
-            // nationalDexList.add("#${i.toString().padStart(3, '0')}")
             nationalDexList.add(i.toString())
         }
         // Add number list as data source for the spinner
@@ -208,7 +212,6 @@ class PokemonFragment : Fragment() {
         val typeList = mutableListOf("normal","fire", "water","grass", "electric", "ice",
             "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost",
             "dark", "dragon", "steel", "fairy")
-//        typeList.sort()
         typeList.add(0, "...")
         binding.SpinnerType.attachDataSource(typeList)
         binding.SpinnerType.setOnSpinnerItemSelectedListener { parent, _, position, _ ->
@@ -268,7 +271,6 @@ class PokemonFragment : Fragment() {
             }
         }
     }
-
 
     /** For querying api pokemon data into firebase **/
     // Use for querying data use api call. Not firebase
@@ -400,8 +402,7 @@ class PokemonFragment : Fragment() {
                     Log.i(TAG, "Flavor_Text: $flavor_text")
                 }
 
-                // TODO: for some reason, i get icon = null for meltan 808??
-                // TODO: I fucked up icon somewhere
+                // TODO: for some reason, some icons are null
                 val pokemon = if (pokemonData.types.size == 2) {
                     if (pokemonData.sprites.versions.generation_viii.icons.icon != null) {
                         Pokemon(
@@ -458,11 +459,8 @@ class PokemonFragment : Fragment() {
                 adapter.notifyDataSetChanged()
 
                 // Once we queried everything, save it into firebase
-//                if (pokemon_seen == generation.getTotalPokemon()) {
-//                    saveDataToFirebase(generation.generationName, pokemons)
-//                }
                 if (pokemon_seen == generation.getTotalPokemon()) {
-                    Log.i(TAG, "Seen 20 pokemons, saving to firebase")
+                    Log.i(TAG, "Seen ${generation.getTotalPokemon()} pokemons, saving to firebase")
                     saveDataToFirebase(generation.generationName, pokemons)
                     pokemon_seen = 0
                 }

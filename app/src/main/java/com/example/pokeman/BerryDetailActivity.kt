@@ -42,7 +42,7 @@ class BerryDetailActivity : AppCompatActivity() {
         binding.tvName.text = berry.name
         // some items cant be bought, only found
         if (berry.cost == 0) {
-            binding.tvCost.text = "Can't be purchased"
+            binding.tvCost.text = getString(R.string.cannot_be_purchased)
         } else {
             binding.tvCost.text = "₽${berry.cost}"
         }

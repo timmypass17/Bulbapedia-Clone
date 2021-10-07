@@ -5,7 +5,7 @@ import com.google.firebase.firestore.PropertyName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-// Need to initalize values for firebase
+// Need to initialize values for firebase
 @Parcelize
 data class Pokemon(
     val name: String = "",

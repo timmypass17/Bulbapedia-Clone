@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -43,9 +42,6 @@ class PokemonDetailActivity : AppCompatActivity() {
         val pokemon = intent.getParcelableExtra<Pokemon>(EXTRA_POKEMON)
         if (pokemon != null) {
             bind(pokemon)
-            adapter = AbilityAdapter(this, pokemon.abilities.toList())
-            binding.rvAbilities.adapter = adapter
-            binding.rvAbilities.layoutManager = LinearLayoutManager(this)
         }
 
     }
@@ -59,8 +55,15 @@ class PokemonDetailActivity : AppCompatActivity() {
     }
 
     private fun bind(pokemon: Pokemon) {
+        // Set up abilities rv
+        adapter = AbilityAdapter(this, pokemon.abilities.toList())
+        binding.rvAbilities.adapter = adapter
+        binding.rvAbilities.layoutManager = LinearLayoutManager(this)
+
         supportActionBar?.title = pokemon.name
+
         // TODO: Click on image, change sprite to animated one
+        // Set up sprite and palette
         Glide.with(this)
             .asBitmap()
             .load(pokemon.sprite)
@@ -82,6 +85,8 @@ class PokemonDetailActivity : AppCompatActivity() {
                 }
             })
             .into(binding.ivPokemon)
+
+        // Set up text views and pokemon types
         binding.tvName.text = pokemon.name
         binding.tvGenera.text = pokemon.genera
         binding.tvFlavorText.text = pokemon.flavor_text
@@ -101,6 +106,7 @@ class PokemonDetailActivity : AppCompatActivity() {
             binding.chipType2.setChipStrokeColorResource(getStrokeColor(pokemon.type2))
         }
 
+        // Set up stats
         binding.tvHealth.text = pokemon.stats["hp"].toString()
         binding.tvAttack.text = pokemon.stats["attack"].toString()
         binding.tvDefense.text = pokemon.stats["defense"].toString()
