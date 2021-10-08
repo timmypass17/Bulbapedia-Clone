@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pokeman.BerryDetailActivity
 import com.example.pokeman.R
 import com.example.pokeman.data.PokemonItem
@@ -35,7 +36,10 @@ class BerryAdapter(
         private val ivBerrySprite = itemView.findViewById<ImageView>(R.id.ivBerrySprite)
 
         fun bind(berry: PokemonItem) {
-            Glide.with(context).load(berry.sprite).into(ivBerrySprite)
+            Glide.with(context)
+                .load(berry.sprite)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ivBerrySprite)
 
             // OnClick navigate to details page
             ivBerrySprite.setOnClickListener {

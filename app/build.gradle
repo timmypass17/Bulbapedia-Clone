@@ -73,4 +73,8 @@ dependencies {
 
     // Palette
     implementation 'com.android.support:palette-v7:30.0.0'
+
+    // Ticker
+    implementation 'com.robinhood.ticker:ticker:2.0.2'
+
 }

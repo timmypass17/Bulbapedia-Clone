@@ -3,6 +3,6 @@
     <string name="choose_gen">Choose a generation</string>
     <string name="btn_neg">Cancel</string>
     <string name="btn_pos">OK</string>
-    <string name="total_items">Total Items: %d</string>
+    <string name="total_items">Poke Items</string>
     <string name="cannot_be_purchased">Can\'t be purchased</string>
 </resources>

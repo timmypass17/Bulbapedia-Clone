@@ -16,6 +16,7 @@ import com.example.pokeman.data.PokemonItemResult
 import com.example.pokeman.databinding.FragmentBerryBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.robinhood.ticker.TickerUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,6 +65,8 @@ class BerryFragment : Fragment() {
         // Get pokemon items from firebase
         getBerriesFromFirebase()
 
+        // Ticker animation
+        binding.tickerTotal.setCharacterLists(TickerUtils.provideNumberList())
 //        for (i in 1..954) {
 //            queryPokemonItem(i.toString());
 //        }
@@ -82,8 +85,7 @@ class BerryFragment : Fragment() {
                     berries.addAll(originalBerries)
                     adapter.notifyDataSetChanged()
                     // Update total text
-                    val totalText = getString(R.string.total_items)
-                    binding.tvBerryTotal.text = String.format(totalText, originalBerries.size)
+                    binding.tickerTotal.text = "(" + originalBerries.size.toString() + ")"
                     return true
                 }
 
@@ -97,8 +99,7 @@ class BerryFragment : Fragment() {
                 }
                 // TODO: Add covid tracker spinning number effect
                 // Update total text
-                val totalText = getString(R.string.total_items)
-                binding.tvBerryTotal.text = String.format(totalText, berriesSearch.size)
+                binding.tickerTotal.text = "(" + berriesSearch.size.toString() + ")"
 
                 // update adapter dataset
                 berries.clear()
@@ -121,8 +122,7 @@ class BerryFragment : Fragment() {
             Log.i(TAG, "Getting berries from fb")
 
             // intialize berry count
-            val totalText = getString(R.string.total_items)
-            binding.tvBerryTotal.text = String.format(totalText, berryData.berries.size)
+            binding.tickerTotal.text = "(" + berryData.berries.size.toString() + ")"
 
             // Add data to adapter
             berries.addAll(berryData.berries.toMutableList())

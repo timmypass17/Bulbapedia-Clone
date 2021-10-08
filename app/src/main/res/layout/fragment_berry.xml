@@ -23,23 +23,11 @@
 
     </SearchView>
 
-    <TextView
-        android:id="@+id/tvBerryTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/svBerry"
-        tools:text="Total Items: 898" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBerries"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -47,5 +35,29 @@
         app:layout_constraintTop_toBottomOf="@+id/tvBerryTotal"
         app:layout_constraintVertical_bias="0.971"
         tools:listitem="@layout/item_berry" />
+
+    <TextView
+        android:id="@+id/tvBerryTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="Poke Items"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/svBerry" />
+
+    <com.robinhood.ticker.TickerView
+        android:id="@+id/tickerTotal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:text="(0)"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toEndOf="@+id/tvBerryTotal"
+        app:layout_constraintTop_toTopOf="@+id/tvBerryTotal" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

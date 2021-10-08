@@ -13,18 +13,15 @@
         android:theme="@style/Theme.Pokeman">
         <activity
             android:name=".BerryDetailActivity"
-            android:exported="true" />
-        <activity
-            android:name=".item_ability"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".PokemonDetailActivity"
-            android:exported="true" />
-        <activity
-            android:name=".DetailPokemonActivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

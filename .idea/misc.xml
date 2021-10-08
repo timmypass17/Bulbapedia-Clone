@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.22037037037037038" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/drawable/ic_baseline_adb_24.xml" value="0.22037037037037038" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/drawable/ic_launcher_background.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/drawable/ic_stat_v2.xml" value="0.19814814814814816" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/drawable/ic_stats.xml" value="0.22037037037037038" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/activity_berry_detail.xml" value="0.11513157894736842" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/activity_detail_pokemon.xml" value="0.2361111111111111" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/activity_main.xml" value="0.24649859943977592" />
@@ -11,7 +15,7 @@
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/dialog_generation.xml" value="0.33" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/dialog_pokemon_details.xml" value="0.3104166666666667" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_ability.xml" value="0.30052083333333335" />
-        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_berry.xml" value="0.32205128205128203" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_berry.xml" value="0.33" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_pokemon.xml" value="0.16104868913857678" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_stat.xml" value="0.1" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/layout/fragment_stats.xml" value="0.25" />
@@ -22,6 +26,8 @@
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/menu/menu_bottom_navigation.xml" value="0.30277777777777776" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/menu/menu_generation.xml" value="0.32205128205128203" />
         <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/menu/menu_main.xml" value="0.25" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/Users/14087/AndroidStudioProjects/pokeman/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1638888888888889" />
       </map>
     </option>
   </component>
